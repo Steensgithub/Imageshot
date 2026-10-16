@@ -12,7 +12,7 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 
 ## Status
 - [x] Fase 1 – fundament: struktur, CI, tests, selvtest, fejllog, sprog, Win11-PrtScn, Om-side
-- [ ] Fase 2 – stabil motor
+- [x] Fase 2 – stabil motor
 - [ ] Fase 3 – udseende (tema, lup, nyt ikon)
 - [ ] Fase 4 – funktioner (tegneværktøjer, slør, historik, OCR, forsinkelse, fastgør, filnavne)
 - [ ] Fase 5 – udgivelse (installer, opdatering, signering, Chrome Web Store)
@@ -22,4 +22,5 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - Windows: kode delt i filer, SDK-projekt net48, oversættelser (125 nøgler), selvtest, løbende fejllog, overførsel fra "Skærmbillede".
 - CI grøn på begge jobs (570f05d): build, 11 xUnit-tests, selvtest på Windows 11; 7 Chromium-tests.
 - Win11: PrtScn fanges med lavniveau-tastaturhook (egen tråd), så Skærmklip ikke stjæler tasten. Om ImageShot-vindue tilføjet (91e365d).
-- Næste: Fase 2 – stabil motor (DPI pr. skærm i alle vinduer, hukommelse, DXGI isoleret og testet).
+- Fase 2 (b73616c): markering skalerer tekst pr. skærm-DPI, hukommelse frigives efter optagelse (selvtest: 26→26 MB efter 8 optagelser), DirectX-sessioner testet pr. skærm. DXGI var allerede isoleret (HandleProcessCorruptedStateExceptions + GDI-reserve).
+- Næste: Fase 3 – nyt ikon, lyst/mørkt tema, lup + piletaster i markering.
