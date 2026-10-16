@@ -13,7 +13,7 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 ## Status
 - [x] Fase 1 – fundament: struktur, CI, tests, selvtest, fejllog, sprog, Win11-PrtScn, Om-side
 - [x] Fase 2 – stabil motor
-- [ ] Fase 3 – udseende (tema, lup, nyt ikon)
+- [x] Fase 3 – udseende (tema, lup, nyt ikon)
 - [ ] Fase 4 – funktioner (tegneværktøjer, slør, historik, OCR, forsinkelse, fastgør, filnavne)
 - [ ] Fase 5 – udgivelse (installer, opdatering, signering, Chrome Web Store)
 
@@ -23,4 +23,6 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - CI grøn på begge jobs (570f05d): build, 11 xUnit-tests, selvtest på Windows 11; 7 Chromium-tests.
 - Win11: PrtScn fanges med lavniveau-tastaturhook (egen tråd), så Skærmklip ikke stjæler tasten. Om ImageShot-vindue tilføjet (91e365d).
 - Fase 2 (b73616c): markering skalerer tekst pr. skærm-DPI, hukommelse frigives efter optagelse (selvtest: 26→26 MB efter 8 optagelser), DirectX-sessioner testet pr. skærm. DXGI var allerede isoleret (HandleProcessCorruptedStateExceptions + GDI-reserve).
-- Næste: Fase 3 – nyt ikon, lyst/mørkt tema, lup + piletaster i markering.
+- Fase 3 (6eb3e15, 48a1e00): nyt ikon (brand/make_icon.py), Theme.cs (auto/lyst/mørkt, mørke listefelter, menu), indstillinger i 2 kolonner med sprog/udseende/filnavneskabelon, lup + piletaster i markering. Udvidelsen havde allerede brandfarver + mørk tilstand.
+- CI lægger skærmbilleder på grenene ci-shots-windows / ci-shots-extension (hent: git fetch origin ci-shots-windows; git archive … | tar -x). Bruges til visuel kontrol.
+- Næste: Fase 4 – editor med tegneværktøjer (pil, firkant, ellipse, overstreg, tekst, nummer, slør), fastgør, forsinkelse, historik, OCR; derefter udvidelsens editor.
