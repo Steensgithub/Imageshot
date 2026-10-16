@@ -58,11 +58,12 @@ namespace ImageShot
             keyHook = new KeyboardHook(invoker, OnHotkey);
             if (!keyHook.Start()) ErrorLog.Info("Tastaturhook ikke aktiv – PrtScn bruger RegisterHotKey");
             List<string> failed = RegisterHotkeys();
+            StartUpdateChecks();
 
             if (St.FirstRun)
             {
                 St.FirstRun = false;
-                SetStartup(true);
+                SetStartup(InstallerAutostart());
                 St.Save();
                 OpenSettings(true);
             }
@@ -333,6 +334,34 @@ namespace ImageShot
                 DoCapture(Mode.Region, false);
             };
             t.Start();
+        }
+
+        // Valget "Start automatisk" i installationsprogrammet (findes ikke ved bærbar brug → til).
+        static bool InstallerAutostart()
+        {
+            try
+            {
+                using (RegistryKey k = Registry.CurrentUser.OpenSubKey(@"Software\ImageShot"))
+                {
+                    object v = k == null ? null : k.GetValue("InstallerAutostart");
+                    return v == null || v.ToString() != "0";
+                }
+            }
+            catch { return true; }
+        }
+
+        System.Windows.Forms.Timer updateTimer;
+
+        void StartUpdateChecks()
+        {
+            updateTimer = new System.Windows.Forms.Timer();
+            updateTimer.Interval = 30 * 1000; // første tjek 30 s efter start, derefter hver 24. time
+            updateTimer.Tick += delegate
+            {
+                updateTimer.Interval = 24 * 60 * 60 * 1000;
+                if (St.CheckUpdates) Updater.Check(false, null);
+            };
+            updateTimer.Start();
         }
 
         public void OpenPreview(Shot shot)

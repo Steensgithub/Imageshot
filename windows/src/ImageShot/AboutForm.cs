@@ -86,8 +86,11 @@ namespace ImageShot
                 try { Directory.CreateDirectory(AppPaths.LogDir); Process.Start("explorer.exe", "\"" + AppPaths.LogDir + "\""); }
                 catch (Exception ex) { ErrorLog.Write("Åbn logmappe", ex); }
             };
+            Button upd = new Button { Text = L.T("about.checkUpdates"), AutoSize = true };
+            upd.Click += delegate { Updater.Check(true, this); };
             buttons.Controls.Add(close);
             buttons.Controls.Add(logs);
+            buttons.Controls.Add(upd);
             t.Controls.Add(buttons, 0, 4);
             t.SetColumnSpan(buttons, 2);
 

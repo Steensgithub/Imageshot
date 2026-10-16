@@ -33,6 +33,21 @@ jobs:
           Get-Content artifacts/selftest/report.txt -Encoding utf8
           if ($p.ExitCode -ne 0) { Write-Error "Selvtesten fejlede ($($p.ExitCode))"; exit 1 }
 
+      - name: Pak installationsprogram, bærbar zip og udvidelse
+        shell: pwsh
+        run: |
+          [xml]$p = Get-Content windows/src/ImageShot/ImageShot.csproj
+          pwsh build/package.ps1 -Version $p.Project.PropertyGroup[0].Version
+
+      - name: Del byggede filer (gren ci-build)
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          d="$RUNNER_TEMP/build"; mkdir -p "$d"; cp artifacts/release/* "$d"/
+          cd "$d" && git init -q && git checkout -q -b ci-build && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "build ${{ github.sha }}"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-build
+
       - name: Fejllog fra selvtesten
         if: always()
         shell: pwsh

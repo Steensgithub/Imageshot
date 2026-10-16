@@ -1,0 +1,107 @@
+name: Udgivelse
+
+# Starter, når et versionsmærke skubbes:  git tag v2.0.0 && git push origin v2.0.0
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (fx 2.0.0) – bygger uden at udgive'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      # Signering slås til ved at oprette disse hemmeligheder (se docs/SIGNING.md). Uden dem bygges usigneret.
+      SIGNING_ENABLED: ${{ secrets.AZURE_CLIENT_ID != '' && secrets.AZURE_SIGNING_ENDPOINT != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: v
+        shell: pwsh
+        run: |
+          $v = if ('${{ github.event_name }}' -eq 'workflow_dispatch') { '${{ github.event.inputs.version }}' } else { '${{ github.ref_name }}'.TrimStart('v') }
+          if ($v -notmatch '^\d+\.\d+\.\d+$') { throw "Ugyldig version: $v" }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          $m = Get-Content extension/manifest.json -Raw | ConvertFrom-Json
+          if ($m.version -ne $v) { throw "extension/manifest.json har version $($m.version) – ret den til $v før udgivelsen" }
+
+      - name: Byg
+        run: dotnet build windows/src/ImageShot/ImageShot.csproj -c Release -p:Version=${{ steps.v.outputs.version }}
+
+      - name: Enhedstests
+        run: dotnet test windows/tests/ImageShot.Tests/ImageShot.Tests.csproj -c Release
+
+      - name: Selvtest
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath windows/src/ImageShot/bin/Release/net48/ImageShot.exe -ArgumentList '--selftest', "$PWD/artifacts/selftest" -PassThru -Wait
+          Get-Content artifacts/selftest/report.txt -Encoding utf8
+          if ($p.ExitCode -ne 0) { throw "Selvtesten fejlede" }
+
+      - name: Signér programmet
+        if: env.SIGNING_ENABLED == 'true'
+        uses: azure/trusted-signing-action@v0.5.1
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ secrets.AZURE_SIGNING_PROFILE }}
+          files-folder: windows/src/ImageShot/bin/Release/net48
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+
+      - name: Pak
+        shell: pwsh
+        run: pwsh build/package.ps1 -Version ${{ steps.v.outputs.version }}
+
+      - name: Signér installationsprogrammet
+        if: env.SIGNING_ENABLED == 'true'
+        uses: azure/trusted-signing-action@v0.5.1
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ secrets.AZURE_SIGNING_PROFILE }}
+          files-folder: artifacts/release
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+
+      - name: Kontrolsummer
+        shell: pwsh
+        run: |
+          Get-ChildItem artifacts/release -File | Where-Object Name -ne 'SHA256SUMS.txt' |
+            ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } |
+            Set-Content artifacts/release/SHA256SUMS.txt -Encoding ascii
+
+      - name: Opret udgivelse på GitHub
+        if: github.event_name == 'push'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = '${{ steps.v.outputs.version }}'
+          $notes = "docs/releases/$v.md"
+          $ghArgs = @('release', 'create', "v$v", (Get-ChildItem artifacts/release -File).FullName, '--title', "ImageShot $v")
+          if (Test-Path $notes) { $ghArgs += @('--notes-file', $notes) } else { $ghArgs += @('--generate-notes') }
+          gh @ghArgs
+
+      - name: Gem filer
+        uses: actions/upload-artifact@v4
+        with:
+          name: imageshot-${{ steps.v.outputs.version }}
+          path: artifacts/release/
