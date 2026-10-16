@@ -16,7 +16,11 @@ jobs:
         run: dotnet build windows/src/ImageShot/ImageShot.csproj -c Release -warnaserror:CS0108,CS0114
 
       - name: Enhedstests
-        run: dotnet test windows/tests/ImageShot.Tests/ImageShot.Tests.csproj -c Release --logger "console;verbosity=normal" --logger "trx;LogFileName=tests.trx" --results-directory artifacts/tests
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          dotnet test windows/tests/ImageShot.Tests/ImageShot.Tests.csproj -c Release --logger "console;verbosity=normal" --logger "trx;LogFileName=tests.trx" --results-directory artifacts/tests 2>&1 | Tee-Object -FilePath artifacts/tests.log
+          exit $LASTEXITCODE
 
       - name: Selvtest i det rigtige program
         shell: pwsh
@@ -32,6 +36,22 @@ jobs:
         run: |
           $d = Join-Path $env:APPDATA "ImageShot\logs"
           if (Test-Path $d) { Copy-Item $d artifacts/logs -Recurse; Get-ChildItem $d | ForEach-Object { Get-Content $_.FullName -Encoding utf8 } }
+
+      # Resultaterne skrives også som annoteringer, så de kan læses via GitHubs API.
+      - name: Rapportér resultater som annoteringer
+        if: always()
+        shell: pwsh
+        run: |
+          function Annotate($level, $title, $file) {
+            if (-not (Test-Path $file)) { return }
+            $t = (Get-Content $file -Encoding utf8 | Select-Object -Last 220) -join "`n"
+            $t = $t.Replace('%', '%25').Replace("`r", '').Replace("`n", '%0A')
+            Write-Output "::$level title=$title::$t"
+          }
+          $failedTests = (Test-Path artifacts/tests.log) -and (Select-String -Path artifacts/tests.log -Pattern 'Failed!|Mislykkedes|error' -Quiet)
+          Annotate ($(if ($failedTests) { 'error' } else { 'notice' })) 'Enhedstests' artifacts/tests.log
+          Annotate 'notice' 'Selvtest' artifacts/selftest/report.txt
+          Get-ChildItem artifacts/logs -ErrorAction SilentlyContinue | ForEach-Object { Annotate 'notice' ('Log ' + $_.Name) $_.FullName }
 
       - name: Gem resultater
         if: always()
