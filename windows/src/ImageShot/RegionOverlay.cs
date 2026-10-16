@@ -28,7 +28,7 @@ namespace ImageShot
         Font font, bold, labelFont;  // skaleret til den enkelte skærms DPI
         float sc = 1f, lsc = 1f;     // skala for værktøjslinjen / størrelsesmærket
         int labelDpi;
-        readonly Color accent = Color.FromArgb(0, 120, 215);
+        readonly Color accent = Theme.Brand;
 
         bool dragging;
         Point start;
@@ -46,6 +46,7 @@ namespace ImageShot
 
         public Rectangle Selection;  // virtuelle skærmkoordinater
         public string SelectedTitle;
+        public IntPtr SelectedHandle; // vinduet, billedet kommer fra (til {app} i filnavnet)
         public Bitmap ResultImage;   // sat, når der er scrollet (billedet er syet sammen)
 
         // Scroll ved at skubbe til kanten
@@ -188,7 +189,7 @@ namespace ImageShot
             {
                 case 0: return; // Markér område: træk bare en ramme
                 case 1:
-                    if (fgWin != null) { r = fgWin.Bounds; title = fgWin.Title; }
+                    if (fgWin != null) { r = fgWin.Bounds; title = fgWin.Title; SelectedHandle = fgWin.Handle; }
                     else r = Screen.FromPoint(Cursor.Position).Bounds;
                     break;
                 case 2: r = Screen.FromPoint(Cursor.Position).Bounds; break;
@@ -283,7 +284,7 @@ namespace ImageShot
                 {
                     Rectangle r = toolRects[i];
                     Color fill = i == hoverTool ? (i == 4 ? Color.FromArgb(196, 43, 28) : accent)
-                               : i == 0 ? Color.FromArgb(0, 84, 153) : Color.FromArgb(62, 63, 67);
+                               : i == 0 ? Theme.BrandDark : Color.FromArgb(62, 63, 67);
                     using (GraphicsPath bp = Rounded(r, S(6)))
                     using (SolidBrush b = new SolidBrush(fill))
                         g.FillPath(b, bp);
@@ -371,8 +372,13 @@ namespace ImageShot
                 UpdateHover(e.Location);
                 chosen = hover;
                 SelectedTitle = hoverWin != null ? hoverWin.Title : null;
+                SelectedHandle = hoverWin != null ? hoverWin.Handle : IntPtr.Zero;
             }
-            else chosen = sel;
+            else
+            {
+                chosen = sel;
+                if (dragWin != null) { SelectedTitle = dragWin.Title; SelectedHandle = dragWin.Handle; }
+            }
             chosen.Offset(vs.Left, vs.Top);
             Selection = chosen;
             DialogResult = DialogResult.OK;
@@ -617,6 +623,7 @@ namespace ImageShot
                 if (r.Width < 4 || r.Height < 4) { DialogResult = DialogResult.Cancel; return; }
                 Selection = r;
                 SelectedTitle = dragWin.Title;
+                SelectedHandle = dragWin.Handle;
                 DialogResult = DialogResult.OK;
                 return;
             }
@@ -625,6 +632,7 @@ namespace ImageShot
             if (ResultImage == null) { DialogResult = DialogResult.Cancel; return; }
             Selection = new Rectangle(grabRect.Left, band.Top, ResultImage.Width, ResultImage.Height);
             SelectedTitle = dragWin.Title;
+            SelectedHandle = dragWin.Handle;
             DialogResult = DialogResult.OK;
         }
 

@@ -5,6 +5,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   windows:
     name: Windows-program (bygning, tests, selvtest)
@@ -53,6 +56,16 @@ jobs:
           Annotate 'notice' 'Selvtest' artifacts/selftest/report.txt
           Get-ChildItem artifacts/logs -ErrorAction SilentlyContinue | ForEach-Object { Annotate 'notice' ('Log ' + $_.Name) $_.FullName }
 
+      - name: Del skærmbilleder (gren ci-shots-windows)
+        if: always()
+        shell: bash
+        run: |
+          d="$RUNNER_TEMP/shots"; mkdir -p "$d"
+          cp artifacts/selftest/ui/*.png artifacts/selftest/*.png "$d"/ 2>/dev/null || true
+          cd "$d" && git init -q && git checkout -q -b ci-shots-windows && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "skærmbilleder ${{ github.sha }}" || exit 0
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-shots-windows
+
       - name: Gem resultater
         if: always()
         uses: actions/upload-artifact@v4
@@ -93,6 +106,15 @@ jobs:
             if grep -qiE "FAIL|not ok|Error" out/run-all.log; then lvl=error; else lvl=notice; fi
             echo "::$lvl title=Udvidelsestests::$msg"
           fi
+      - name: Del skærmbilleder (gren ci-shots-extension)
+        if: always()
+        run: |
+          d="$RUNNER_TEMP/shots"; mkdir -p "$d"
+          find extension/tests/out -name '*.png' -exec cp {} "$d"/ \; 2>/dev/null || true
+          cd "$d" && git init -q && git checkout -q -b ci-shots-extension && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "skærmbilleder ${{ github.sha }}" || exit 0
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-shots-extension
+
       - name: Gem resultater
         if: always()
         uses: actions/upload-artifact@v4

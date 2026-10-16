@@ -36,6 +36,7 @@ namespace ImageShot
         {
             St = Settings.Load();
             L.Init(St.Language);
+            Theme.Init(St.Theme);
 
             tray = new NotifyIcon();
             tray.Icon = Program.AppIcon;
@@ -109,6 +110,7 @@ namespace ImageShot
             quit.Click += delegate { Application.Exit(); };
             m.Items.Add(quit);
             UpdateMenuShortcuts();
+            Theme.Apply(m);
             return m;
         }
 
@@ -176,12 +178,13 @@ namespace ImageShot
                 Rectangle vs = SystemInformation.VirtualScreen;
                 Rectangle target = Rectangle.Empty;
                 string title = null;
+                srcWindow = IntPtr.Zero;
 
                 // Find målet, før skærmen fryses (fokus kan skifte bagefter).
                 if (mode == Mode.Window)
                 {
                     WinInfo w = fromMenu ? Capture.TopAppWindow() : Capture.ForegroundAppWindow();
-                    if (w != null) { target = w.Bounds; title = w.Title; }
+                    if (w != null) { target = w.Bounds; title = w.Title; srcWindow = w.Handle; }
                     else mode = Mode.Screen;
                 }
                 if (mode == Mode.Screen) target = Screen.FromPoint(Cursor.Position).Bounds;
@@ -203,6 +206,7 @@ namespace ImageShot
                         if (ov.ShowDialog() != DialogResult.OK) return;
                         target = ov.Selection;
                         title = ov.SelectedTitle;
+                        srcWindow = ov.SelectedHandle;
                         if (ov.ResultImage != null)
                         {
                             // Der blev scrollet: billedet er allerede syet sammen.
@@ -231,16 +235,15 @@ namespace ImageShot
             }
         }
 
+        IntPtr srcWindow;   // vinduet, der blev fotograferet (til {app})
+
         void Deliver(Bitmap crop, string title)
         {
             Quality q = St.Q;
             Bitmap img = Capture.Scale(crop, q.Scale);
             if (!ReferenceEquals(img, crop)) crop.Dispose();
 
-            string name = L.T("file.prefix") + " " + Output.Stamp(DateTime.Now);
-            string t = Output.Clean(title);
-            if (t.Length > 40) t = t.Substring(0, 40).Trim();
-            if (t.Length > 0) name += " " + t;
+            string name = Output.BuildName(St.FileTemplate, DateTime.Now, title, Output.AppOf(srcWindow));
             Shot shot = new Shot(img, name);
 
             if (St.AfterCapture != "clipboard")
@@ -303,6 +306,15 @@ namespace ImageShot
             if (failed.Count > 0) { St = old; return failed; }
             St.Save();
             SetStartup(startup);
+            if (old.Language != St.Language || old.Theme != St.Theme)
+            {
+                // Sprog eller udseende skiftet: byg menuen igen, så den følger med med det samme.
+                L.Init(St.Language);
+                Theme.Init(St.Theme);
+                ContextMenuStrip oldMenu = tray.ContextMenuStrip;
+                tray.ContextMenuStrip = BuildMenu();
+                if (oldMenu != null) oldMenu.Dispose();
+            }
             return failed;
         }
 

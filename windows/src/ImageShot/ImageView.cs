@@ -31,7 +31,7 @@ namespace ImageShot
         string drag;            // null, "new", "move" eller et håndtag (nw, n, ne, e, se, s, sw, w)
         Point anchor, moveOffset;
         Rectangle startSel;
-        readonly Color accent = Color.FromArgb(0, 120, 215);
+        readonly Color accent = Theme.Brand;
         static readonly string[] Handles = { "nw", "n", "ne", "e", "se", "s", "sw", "w" };
 
         public event EventHandler SelectionChanged;

@@ -94,6 +94,7 @@ namespace ImageShot
             Controls.Add(t);
             AcceptButton = close;
             CancelButton = close;
+            Theme.Apply(this);
             ResumeLayout(false);
             PerformLayout();
         }

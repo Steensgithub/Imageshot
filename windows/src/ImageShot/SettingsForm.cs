@@ -26,7 +26,9 @@ namespace ImageShot
         readonly ComboBox format = new ComboBox();
         readonly RadioButton rbShow = new RadioButton(), rbCopy = new RadioButton(), rbSave = new RadioButton();
         readonly CheckBox autoClose = new CheckBox(), startup = new CheckBox(), alwaysDx = new CheckBox();
-        readonly TextBox folder = new TextBox();
+        readonly TextBox folder = new TextBox(), template = new TextBox();
+        readonly Label example = new Label();
+        readonly ComboBox language = new ComboBox(), theme = new ComboBox();
 
         public SettingsForm(App app, bool firstRun)
         {
@@ -45,35 +47,42 @@ namespace ImageShot
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-            TableLayoutPanel t = new TableLayoutPanel();
-            t.AutoSize = true;
-            t.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            t.ColumnCount = 2;
-            t.Padding = new Padding(16, 8, 16, 12);
-            t.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            t.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            // To kolonner, så vinduet også passer på en bærbar skærm.
+            TableLayoutPanel outer = new TableLayoutPanel();
+            outer.AutoSize = true;
+            outer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            outer.ColumnCount = 2;
+            outer.Padding = new Padding(16, 8, 16, 12);
+            TableLayoutPanel t = Column(), r = Column();
+            r.Margin = new Padding(28, 0, 0, 0);
 
             if (firstRun)
             {
                 Label intro = new Label();
                 intro.AutoSize = true;
-                intro.MaximumSize = new Size(520, 0);
+                intro.MaximumSize = new Size(900, 0);
                 intro.Margin = new Padding(0, 8, 0, 4);
                 intro.Text = L.T("set.intro");
-                Span(t, intro);
+                outer.Controls.Add(intro, 0, 0);
+                outer.SetColumnSpan(intro, 2);
             }
+            outer.Controls.Add(t, 0, 1);
+            outer.Controls.Add(r, 1, 1);
 
+            // ---- venstre: genveje, billede, efter optagelse
             Span(t, FormHelp.Heading(L.T("set.hotkeys")));
             Row(t, L.T("set.hkRegion") + ":", hkRegion);
             Row(t, L.T("mode.window") + ":", hkWindow);
             Row(t, L.T("mode.screen") + ":", hkScreen);
             Row(t, L.T("mode.all") + ":", hkAll);
-            Span(t, FormHelp.Note(L.T("set.hkNote")));
+            Label hkNote = FormHelp.Note(L.T("set.hkNote"));
+            hkNote.MaximumSize = new Size(420, 0);
+            Span(t, hkNote);
             hkRegion.Value = s.HkRegion; hkWindow.Value = s.HkWindow; hkScreen.Value = s.HkScreen; hkAll.Value = s.HkAll;
 
             Span(t, FormHelp.Heading(L.T("set.image")));
             res.Minimum = 0; res.Maximum = 100; res.TickFrequency = 10; res.SmallChange = 5; res.LargeChange = 10;
-            res.Width = 300;
+            res.Width = 260;
             res.Value = s.Resolution;
             res.ValueChanged += delegate { UpdateRes(); };
             Row(t, L.T("set.resolution") + ":", res);
@@ -100,10 +109,13 @@ namespace ImageShot
             rbSave.Checked = s.AfterCapture == "save";
             autoClose.Text = L.T("set.autoClose");
             autoClose.AutoSize = true;
+            autoClose.MaximumSize = new Size(420, 0);
             autoClose.Checked = s.AutoClose;
             autoClose.Margin = new Padding(3, 8, 3, 4);
             Span(t, autoClose);
 
+            // ---- højre: gem, udseende, andet
+            Span(r, FormHelp.Heading(L.T("set.folder")));
             FlowLayoutPanel fp = new FlowLayoutPanel();
             fp.AutoSize = true;
             fp.WrapContents = false;
@@ -124,18 +136,48 @@ namespace ImageShot
             };
             fp.Controls.Add(folder);
             fp.Controls.Add(browse);
-            Row(t, L.T("set.folder") + ":", fp);
+            Span(r, fp);
 
-            Span(t, FormHelp.Heading(L.T("set.other")));
+            Label fnHead = new Label { Text = L.T("set.fileName") + ":", AutoSize = true, Margin = new Padding(3, 10, 3, 2) };
+            Span(r, fnHead);
+            template.Width = 300;
+            template.Text = s.FileTemplate;
+            template.TextChanged += delegate { UpdateExample(); };
+            Span(r, template);
+            example.AutoSize = true;
+            example.ForeColor = SystemColors.GrayText;
+            example.MaximumSize = new Size(400, 0);
+            Span(r, example);
+            Label fnNote = FormHelp.Note(L.T("set.fileNameNote"));
+            fnNote.MaximumSize = new Size(400, 0);
+            Span(r, fnNote);
+
+            Span(r, FormHelp.Heading(L.T("set.theme")));
+            language.DropDownStyle = ComboBoxStyle.DropDownList;
+            language.Width = 200;
+            language.Items.Add(L.T("set.langAuto"));
+            language.Items.AddRange(L.LanguageNames);
+            int li = Array.IndexOf(L.Languages, s.Language);
+            language.SelectedIndex = li < 0 ? 0 : li + 1;
+            Row(r, L.T("set.language") + ":", language);
+            theme.DropDownStyle = ComboBoxStyle.DropDownList;
+            theme.Width = 200;
+            theme.Items.AddRange(new object[] { L.T("set.themeAuto"), L.T("set.themeLight"), L.T("set.themeDark") });
+            theme.SelectedIndex = s.Theme == "light" ? 1 : s.Theme == "dark" ? 2 : 0;
+            Row(r, L.T("set.theme") + ":", theme);
+
+            Span(r, FormHelp.Heading(L.T("set.other")));
             startup.Text = L.T("set.startup");
             startup.AutoSize = true;
             startup.Checked = App.GetStartup();
-            Span(t, startup);
+            Span(r, startup);
             alwaysDx.Text = L.T("set.alwaysDx");
             alwaysDx.AutoSize = true;
             alwaysDx.Checked = s.AlwaysDx;
-            Span(t, alwaysDx);
-            Span(t, FormHelp.Note(L.T("set.alwaysDxNote")));
+            Span(r, alwaysDx);
+            Label dxNote = FormHelp.Note(L.T("set.alwaysDxNote"));
+            dxNote.MaximumSize = new Size(400, 0);
+            Span(r, dxNote);
 
             FlowLayoutPanel bp = new FlowLayoutPanel();
             bp.AutoSize = true;
@@ -152,14 +194,36 @@ namespace ImageShot
             ok.Click += delegate { SaveAndClose(); };
             bp.Controls.Add(cancel);
             bp.Controls.Add(ok);
-            Span(t, bp);
+            outer.Controls.Add(bp, 0, 2);
+            outer.SetColumnSpan(bp, 2);
 
-            Controls.Add(t);
+            Controls.Add(outer);
             AcceptButton = ok;
             CancelButton = cancel;
             UpdateRes();
+            UpdateExample();
+            Theme.Apply(this);
             ResumeLayout(false);
             PerformLayout();
+        }
+
+        static TableLayoutPanel Column()
+        {
+            TableLayoutPanel t = new TableLayoutPanel();
+            t.AutoSize = true;
+            t.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            t.ColumnCount = 2;
+            t.Margin = Padding.Empty;
+            t.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            t.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            t.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            return t;
+        }
+
+        void UpdateExample()
+        {
+            string n = Output.BuildName(template.Text, DateTime.Now, "Dokument1 - Word", "WINWORD").Replace("{counter}", "001");
+            example.Text = "→ " + n + (format.SelectedIndex == 1 ? ".jpg" : ".png");
         }
 
         static void Row(TableLayoutPanel t, string label, Control c)
@@ -223,6 +287,9 @@ namespace ImageShot
             s.AutoClose = autoClose.Checked;
             s.Folder = dir;
             s.AlwaysDx = alwaysDx.Checked;
+            s.FileTemplate = template.Text.Trim().Length == 0 ? Output.DefaultTemplate : template.Text.Trim();
+            s.Language = language.SelectedIndex <= 0 ? "auto" : L.Languages[language.SelectedIndex - 1];
+            s.Theme = theme.SelectedIndex == 1 ? "light" : theme.SelectedIndex == 2 ? "dark" : "auto";
 
             List<string> failed = app.Apply(s, startup.Checked);
             if (failed.Count > 0)

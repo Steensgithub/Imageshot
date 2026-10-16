@@ -92,6 +92,7 @@ namespace ImageShot
             Controls.Add(root);
             AcceptButton = copy;
             CancelButton = close;
+            Theme.Apply(this);
             UpdateStatus(null);
             ResumeLayout(false);
             PerformLayout();
@@ -248,7 +249,7 @@ namespace ImageShot
                 d.Filter = L.T("dialog.filter");
                 d.FilterIndex = app.St.Q.Png ? 1 : 2;
                 d.DefaultExt = app.St.Q.Png ? "png" : "jpg";
-                d.FileName = Output.Clean(shot.Name) + (app.St.Q.Png ? ".png" : ".jpg");
+                d.FileName = Output.LeafName(shot.Name) + (app.St.Q.Png ? ".png" : ".jpg");
                 try { Directory.CreateDirectory(app.St.Folder); d.InitialDirectory = app.St.Folder; } catch { }
                 if (d.ShowDialog(this) != DialogResult.OK) return;
                 bool png = d.FilterIndex != 2;

@@ -35,6 +35,42 @@ namespace ImageShot
             return d.ToString("yyyy-MM-dd") + " kl. " + d.ToString("HH.mm.ss");
         }
 
+        public const string DefaultTemplate = "{prefix} {date} {time} {title}";
+
+        // Filnavn ud fra skabelonen i indstillingerne. "\\" giver undermapper; {counter} udfyldes ved gemning.
+        public static string BuildName(string template, DateTime d, string title, string app)
+        {
+            string t = string.IsNullOrWhiteSpace(template) ? DefaultTemplate : template.Trim();
+            string ti = Clean(title);
+            if (ti.Length > 40) ti = ti.Substring(0, 40).Trim();
+            return t.Replace("{prefix}", L.T("file.prefix"))
+                    .Replace("{date}", d.ToString("yyyy-MM-dd"))
+                    .Replace("{time}", d.ToString("HH.mm.ss"))
+                    .Replace("{title}", ti)
+                    .Replace("{app}", Clean(app));
+        }
+
+        // Programnavnet (fx "WINWORD") for et vindue.
+        public static string AppOf(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero) return "";
+            try
+            {
+                uint pid;
+                Native.GetWindowThreadProcessId(hwnd, out pid);
+                using (Process p = Process.GetProcessById((int)pid)) return p.ProcessName;
+            }
+            catch { return ""; }
+        }
+
+        // Sidste del af navnet (uden mapper og tæller) – til "Gem som".
+        public static string LeafName(string name)
+        {
+            string[] parts = (name ?? "").Split('\\', '/');
+            string leaf = Clean(parts[parts.Length - 1].Replace("{counter}", ""));
+            return leaf.Length > 0 ? leaf : L.T("file.prefix");
+        }
+
         public static string Clean(string s)
         {
             if (string.IsNullOrEmpty(s)) return "";
@@ -67,14 +103,32 @@ namespace ImageShot
             string path = explicitPath;
             if (path == null)
             {
-                Directory.CreateDirectory(st.Folder);
-                string name = Clean(shot.Name);
-                if (name.Length > 120) name = name.Substring(0, 120).Trim();
-                if (name.Length == 0) name = L.T("file.prefix");
+                string dir = st.Folder;
+                string[] parts = (shot.Name ?? "").Split('\\', '/');
+                for (int i = 0; i < parts.Length - 1; i++)
+                {
+                    string sub = Clean(parts[i]);
+                    if (sub.Length > 0) dir = Path.Combine(dir, sub.Length > 60 ? sub.Substring(0, 60).Trim() : sub);
+                }
+                Directory.CreateDirectory(dir);
+                string name = parts[parts.Length - 1];
                 string ext = png ? ".png" : ".jpg";
-                path = Path.Combine(st.Folder, name + ext);
-                for (int i = 2; File.Exists(path); i++)
-                    path = Path.Combine(st.Folder, name + " (" + i + ")" + ext);
+                if (name.Contains("{counter}"))
+                {
+                    for (int i = 1; ; i++)
+                    {
+                        string n = Fit(name.Replace("{counter}", i.ToString("000")));
+                        path = Path.Combine(dir, n + ext);
+                        if (!File.Exists(path)) break;
+                    }
+                }
+                else
+                {
+                    name = Fit(name);
+                    path = Path.Combine(dir, name + ext);
+                    for (int i = 2; File.Exists(path); i++)
+                        path = Path.Combine(dir, name + " (" + i + ")" + ext);
+                }
             }
             if (png)
             {
@@ -92,6 +146,13 @@ namespace ImageShot
                 }
             }
             return path;
+        }
+
+        static string Fit(string name)
+        {
+            name = Clean(name);
+            if (name.Length > 120) name = name.Substring(0, 120).Trim();
+            return name.Length == 0 ? L.T("file.prefix") : name;
         }
 
         public static void OpenFolder(string folder, string selectFile)

@@ -29,6 +29,35 @@ namespace ImageShot
             }
         }
 
+        static void Shoot(Form f, string file)
+        {
+            f.StartPosition = FormStartPosition.Manual;
+            f.Location = new Point(20, 20);
+            f.Show();
+            for (int i = 0; i < 5; i++) { Application.DoEvents(); System.Threading.Thread.Sleep(30); }
+            using (Bitmap b = new Bitmap(f.Width, f.Height))
+            {
+                f.DrawToBitmap(b, new Rectangle(0, 0, f.Width, f.Height));
+                b.Save(file, ImageFormat.Png);
+            }
+            f.Close();
+            f.Dispose();
+        }
+
+        static Bitmap SampleImage()
+        {
+            Bitmap b = new Bitmap(640, 400, PixelFormat.Format32bppRgb);
+            using (Graphics g = Graphics.FromImage(b))
+            {
+                g.Clear(Color.White);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(0x1F, 0x6F, 0xEB)), 0, 0, 640, 48);
+                using (Font f = new Font("Segoe UI", 14f)) g.DrawString("Eksempel – Example", f, Brushes.Black, 24, 80);
+                g.FillRectangle(Brushes.LightGray, 24, 130, 400, 14);
+                g.FillRectangle(Brushes.LightGray, 24, 160, 340, 14);
+            }
+            return b;
+        }
+
         public static int Run(string outDir)
         {
             Directory.CreateDirectory(outDir);
@@ -195,6 +224,27 @@ namespace ImageShot
                 AboutForm af = new AboutForm(app);
                 af.Show(); Application.DoEvents(); af.Close();
                 return "udklipsholder, indstillinger, besked, om";
+            });
+
+            Check("Skærmbilleder af vinduerne (lyst/mørkt, dansk/tysk)", delegate
+            {
+                string dir = Path.Combine(outDir, "ui");
+                Directory.CreateDirectory(dir);
+                int n = 0;
+                foreach (string combo in new[] { "da-light", "da-dark", "de-light", "es-dark" })
+                {
+                    string lang = combo.Substring(0, 2), th = combo.Substring(3);
+                    L.Init(lang); Theme.Init(th);
+                    App app = new App();
+                    app.St = new Settings();
+                    Shoot(new SettingsForm(app, true), Path.Combine(dir, "settings-" + combo + ".png")); n++;
+                    Shoot(new AboutForm(app), Path.Combine(dir, "about-" + combo + ".png")); n++;
+                    using (Bitmap b = SampleImage())
+                        Shoot(new PreviewForm(new Shot((Bitmap)b.Clone(), "test"), app), Path.Combine(dir, "preview-" + combo + ".png"));
+                    n++;
+                }
+                L.Init("auto"); Theme.Init("auto");
+                return n + " billeder i ui\\";
             });
 
             Check("Tastaturhook kan installeres og fjernes", delegate
