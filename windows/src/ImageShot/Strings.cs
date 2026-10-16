@@ -181,6 +181,14 @@ namespace ImageShot
             ["snip.text"] = new[] { "Windows er sat til at åbne Skærmklip, når du trykker PrtScn. ImageShot kan overtage tasten, så PrtScn åbner ImageShot i stedet.\n\nVil du det?", "Windows is set to open the Snipping Tool when you press PrtScn. ImageShot can take over the key so PrtScn opens ImageShot instead.\n\nDo you want that?", "Windows öffnet beim Drücken von Druck das Snipping Tool. ImageShot kann die Taste übernehmen, sodass Druck stattdessen ImageShot öffnet.\n\nMöchten Sie das?", "Windows abre Recortes al pulsar ImprPant. ImageShot puede encargarse de la tecla para que ImprPant abra ImageShot.\n\n¿Quieres hacerlo?" },
 
             // --- Om
+            ["ocr.unavailable"] = new[] { "Tekstgenkendelse findes ikke på denne pc (kræver Windows 10/11 med et installeret sprog).", "Text recognition is not available on this PC (requires Windows 10/11 with an installed language).", "Texterkennung ist auf diesem PC nicht verfügbar (erfordert Windows 10/11 mit installierter Sprache).", "El reconocimiento de texto no está disponible en este equipo (requiere Windows 10/11 con un idioma instalado)." },
+            ["ocr.failed"] = new[] { "Tekstgenkendelse mislykkedes: {0}", "Text recognition failed: {0}", "Texterkennung fehlgeschlagen: {0}", "Error en el reconocimiento de texto: {0}" },
+            ["pin.opened"] = new[] { "Billedet er fastgjort øverst på skærmen. Træk for at flytte, musehjul zoomer, Esc lukker.", "The image is pinned on top. Drag to move, scroll to zoom, Esc closes.", "Das Bild ist oben angeheftet. Ziehen zum Verschieben, Mausrad zoomt, Esc schließt.", "La imagen está fijada encima. Arrastra para moverla, la rueda hace zoom, Esc cierra." },
+            ["pin.opacity"] = new[] { "Gennemsigtighed", "Opacity", "Deckkraft", "Opacidad" },
+            ["hist.empty"] = new[] { "(ingen endnu)", "(none yet)", "(noch keine)", "(ninguna todavía)" },
+            ["hist.openFolder"] = new[] { "Åbn historikmappen", "Open history folder", "Verlaufsordner öffnen", "Abrir carpeta del historial" },
+            ["hist.clear"] = new[] { "Ryd historik", "Clear history", "Verlauf löschen", "Borrar historial" },
+            ["delay.countdown"] = new[] { "Skærmbillede om {0} …", "Screenshot in {0} …", "Screenshot in {0} …", "Captura en {0} …" },
             ["about.title"] = new[] { "Om ImageShot", "About ImageShot", "Über ImageShot", "Acerca de ImageShot" },
             ["about.version"] = new[] { "Version {0}", "Version {0}", "Version {0}", "Versión {0}" },
             ["about.tagline"] = new[] { "Skærmbilleder i alle programmer – med scroll, tegneværktøjer og tekstgenkendelse.", "Screenshots in every program – with scrolling capture, annotation tools and text recognition.", "Screenshots in jedem Programm – mit Scroll-Aufnahme, Zeichenwerkzeugen und Texterkennung.", "Capturas en cualquier programa, con desplazamiento, herramientas de anotación y reconocimiento de texto." },

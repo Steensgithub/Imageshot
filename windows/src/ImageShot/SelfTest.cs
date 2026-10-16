@@ -269,6 +269,129 @@ namespace ImageShot
                 }
             });
 
+            Check("Editor: figurer, slør, tilskær, fortryd", delegate
+            {
+                App app = new App();
+                app.St = new Settings();
+                Bitmap src = SampleImage();
+                PreviewForm pf = new PreviewForm(new Shot(src, "editor"), app);
+                pf.Show(); Application.DoEvents();
+                Doc d = pf.Document;
+                Color red = Color.FromArgb(0xE5, 0x48, 0x4D);
+                d.Checkpoint(); d.Shapes.Add(new RectShape { Rect = new RectangleF(20, 60, 300, 60), Color = red, Width = 4 });
+                d.Checkpoint(); d.Shapes.Add(new ArrowShape { A = new PointF(560, 300), B = new PointF(340, 120), Color = red, Width = 4 });
+                d.Checkpoint(); d.Shapes.Add(new EllipseShape { Rect = new RectangleF(420, 200, 160, 90), Color = Theme.Brand, Width = 4 });
+                d.Checkpoint(); d.Shapes.Add(new HighlightShape { Rect = new RectangleF(24, 156, 340, 22), Color = Color.Yellow });
+                d.Checkpoint(); d.Shapes.Add(new StepShape { Center = new PointF(60, 260), Number = d.NextStep(), Radius = 20, Color = red });
+                d.Checkpoint(); d.Shapes.Add(new StepShape { Center = new PointF(120, 260), Number = d.NextStep(), Radius = 20, Color = red });
+                TextShape ts = new TextShape { At = new PointF(160, 240), Text = "Klik her – ÆØÅ", Size = 28, Color = red };
+                d.Checkpoint(); d.Shapes.Add(ts);
+                d.Checkpoint(); d.Shapes.Add(new BlurShape { Rect = new RectangleF(24, 120, 200, 30), Pixelate = true });
+                d.Checkpoint(); d.Shapes.Add(new BlurShape { Rect = new RectangleF(400, 60, 220, 40) });
+                pf.View.Invalidate();
+                for (int i = 0; i < 5; i++) { Application.DoEvents(); System.Threading.Thread.Sleep(30); }
+                string dir = Path.Combine(outDir, "ui");
+                Directory.CreateDirectory(dir);
+                using (Bitmap win = new Bitmap(pf.Width, pf.Height)) { pf.DrawToBitmap(win, new Rectangle(0, 0, pf.Width, pf.Height)); win.Save(Path.Combine(dir, "editor.png"), ImageFormat.Png); }
+                using (Bitmap flat = d.Flatten())
+                {
+                    flat.Save(Path.Combine(dir, "editor-flat.png"), ImageFormat.Png);
+                    Color edge = flat.GetPixel(20, 90);
+                    if (Math.Abs(edge.R - red.R) > 40 || edge.G > 120) throw new Exception("rammen blev ikke tegnet: " + edge);
+                }
+                if (d.NextStep() != 3) throw new Exception("trinnummer forkert: " + d.NextStep());
+                int n = d.Shapes.Count;
+                d.Undo(); d.Undo();
+                if (d.Shapes.Count != n - 2) throw new Exception("fortryd virker ikke");
+                d.Redo();
+                if (d.Shapes.Count != n - 1) throw new Exception("annullér fortryd virker ikke");
+                d.Crop(new Rectangle(10, 10, 300, 200));
+                if (d.Image.Width != 300 || d.Image.Height != 200 || d.Shapes.Count != 0) throw new Exception("tilskæring forkert");
+                d.Undo();
+                if (d.Image.Width != 640 || d.Shapes.Count != n - 1) throw new Exception("fortryd af tilskæring forkert");
+                pf.Close();
+                return n + " figurer, fortryd/annullér, tilskær med figurer";
+            });
+
+            Check("Slør og pixelering skjuler indholdet", delegate
+            {
+                using (Bitmap b = new Bitmap(200, 60, PixelFormat.Format32bppRgb))
+                {
+                    using (Graphics g = Graphics.FromImage(b))
+                    {
+                        g.Clear(Color.White);
+                        using (Font f = new Font("Consolas", 20f, GraphicsUnit.Pixel)) g.DrawString("hemmelig123", f, Brushes.Black, 4, 16);
+                    }
+                    foreach (bool pix in new[] { true, false })
+                        using (Bitmap fx = BlurShape.Effect(b, new Rectangle(0, 0, 200, 60), pix))
+                        {
+                            // Ingen rent sorte pixels tilbage = teksten kan ikke læses.
+                            int black = 0;
+                            for (int y = 0; y < fx.Height; y++) for (int x = 0; x < fx.Width; x++) if (fx.GetPixel(x, y).R < 60) black++;
+                            if (black > 0) throw new Exception((pix ? "pixelering" : "slør") + ": " + black + " mørke pixels");
+                        }
+                }
+                return "ok";
+            });
+
+            Check("Tekstgenkendelse (OCR)", delegate
+            {
+                using (Bitmap b = new Bitmap(520, 120, PixelFormat.Format32bppRgb))
+                {
+                    using (Graphics g = Graphics.FromImage(b))
+                    {
+                        g.Clear(Color.White);
+                        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+                        using (Font f = new Font("Segoe UI", 28f, GraphicsUnit.Pixel)) g.DrawString("ImageShot reads text 2026", f, Brushes.Black, 12, 36);
+                    }
+                    System.Threading.Tasks.Task<string> t = Ocr.RecognizeAsync(b);
+                    DateTime until = DateTime.Now.AddSeconds(20);
+                    while (!t.IsCompleted && DateTime.Now < until) { Application.DoEvents(); System.Threading.Thread.Sleep(20); }
+                    if (!t.IsCompleted) throw new Exception("tidsgrænse");
+                    string r = t.Result;
+                    if (r == null) return "ikke tilgængelig på denne maskine";
+                    if (!r.Contains("ImageShot") || !r.Contains("2026")) throw new Exception("læste: " + r);
+                    return "\"" + r.Replace("\r", "").Replace("\n", " / ") + "\" (" + Ocr.Languages + ")";
+                }
+            });
+
+            Check("Fastgør billede", delegate
+            {
+                PinWindow p = PinWindow.Open(SampleImage(), Screen.PrimaryScreen);
+                for (int i = 0; i < 5; i++) { Application.DoEvents(); System.Threading.Thread.Sleep(20); }
+                bool top = p.TopMost && p.Visible;
+                p.Close();
+                if (!top) throw new Exception("vinduet var ikke øverst");
+                return "ok";
+            });
+
+            Check("Historik: gem, vis, indlæs, ryd", delegate
+            {
+                History.Clear();
+                using (Bitmap b = SampleImage())
+                    for (int i = 0; i < History.MaxItems + 3; i++) History.Add(b, "test " + i, DateTime.Now.AddSeconds(i));
+                List<History.Item> items = History.List();
+                if (items.Count != History.MaxItems) throw new Exception("antal " + items.Count);
+                if (items[0].Name != "test " + (History.MaxItems + 2)) throw new Exception("nyeste først? " + items[0].Name);
+                using (Bitmap l = History.Load(items[0].Path)) if (l.Width != 640) throw new Exception("indlæst forkert");
+                using (Bitmap th = History.Thumb(items[0].Path, 40)) if (th.Height != 40) throw new Exception("miniature forkert");
+                History.Clear();
+                if (History.List().Count != 0) throw new Exception("ikke ryddet");
+                return History.MaxItems + " beholdt, ældste slettet";
+            });
+
+            Check("Filnavneskabelon", delegate
+            {
+                DateTime d = new DateTime(2026, 10, 16, 9, 5, 7);
+                string n = Output.BuildName("{app}\\{date} {title} {counter}", d, "Dok: 1?", "WINWORD");
+                if (n != "WINWORD\\2026-10-16 Dok 1 {counter}") throw new Exception(n);
+                Settings st = new Settings(); st.Folder = Path.Combine(outDir, "skabelon");
+                string p1, p2;
+                using (Bitmap b = new Bitmap(10, 10)) { p1 = Output.Save(new Shot(b, n), st, null, true); p2 = Output.Save(new Shot(b, n), st, null, true); }
+                if (!p1.EndsWith("WINWORD\\2026-10-16 Dok 1 001.png") || !p2.EndsWith("002.png")) throw new Exception(p1 + " / " + p2);
+                return Path.GetFileName(p1) + ", " + Path.GetFileName(p2);
+            });
+
             Check("Tastaturhook kan installeres og fjernes", delegate
             {
                 using (Control c = new Control())

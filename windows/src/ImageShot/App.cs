@@ -84,6 +84,17 @@ namespace ImageShot
                 m.Items.Add(it);
             }
             if (modeItems[0] != null) modeItems[0].Font = new Font(modeItems[0].Font, FontStyle.Bold);
+            ToolStripMenuItem delay = new ToolStripMenuItem(L.T("menu.delay"));
+            foreach (int sec in new[] { 3, 5, 10 })
+            {
+                int s = sec;
+                delay.DropDownItems.Add(L.T("menu.delaySec", sec), null, delegate { CaptureDelayed(s); });
+            }
+            m.Items.Add(delay);
+            ToolStripMenuItem recent = new ToolStripMenuItem(L.T("menu.history"));
+            recent.DropDownItems.Add(L.T("hist.empty")); // så pilen vises; fyldes, når menuen åbnes
+            recent.DropDownOpening += delegate { FillHistory(recent); };
+            m.Items.Add(recent);
             m.Items.Add(new ToolStripSeparator());
             ToolStripMenuItem folder = new ToolStripMenuItem(L.T("menu.folder"));
             folder.Click += delegate { Output.OpenFolder(St.Folder, null); };
@@ -245,6 +256,7 @@ namespace ImageShot
 
             string name = Output.BuildName(St.FileTemplate, DateTime.Now, title, Output.AppOf(srcWindow));
             Shot shot = new Shot(img, name);
+            if (St.KeepHistory) History.AddAsync(img, name);
 
             if (St.AfterCapture != "clipboard")
             {
@@ -269,6 +281,58 @@ namespace ImageShot
             {
                 OpenPreview(shot);
             }
+        }
+
+        void FillHistory(ToolStripMenuItem recent)
+        {
+            foreach (ToolStripItem it in recent.DropDownItems) if (it.Image != null) it.Image.Dispose();
+            recent.DropDownItems.Clear();
+            List<History.Item> items = History.List();
+            int th = Math.Max(24, SystemInformation.SmallIconSize.Height * 2);
+            ((ToolStripDropDownMenu)recent.DropDown).ImageScalingSize = new Size(th * 2, th);
+            if (items.Count == 0) recent.DropDownItems.Add(new ToolStripMenuItem(L.T("hist.empty")) { Enabled = false });
+            for (int i = 0; i < items.Count && i < 12; i++)
+            {
+                History.Item h = items[i];
+                Image thumb = null;
+                try { thumb = History.Thumb(h.Path, th); } catch { }
+                string label = h.Time.ToString("t") + "  ·  " + (h.Name.Length > 50 ? h.Name.Substring(0, 50) + "…" : h.Name);
+                ToolStripMenuItem it = new ToolStripMenuItem(label, thumb);
+                it.ImageScaling = ToolStripItemImageScaling.None;
+                it.Click += delegate
+                {
+                    try { OpenPreview(new Shot(History.Load(h.Path), h.Name)); }
+                    catch (Exception ex) { Toast.ShowText(L.T("toast.captureFailed", ex.Message), true); }
+                };
+                recent.DropDownItems.Add(it);
+            }
+            recent.DropDownItems.Add(new ToolStripSeparator());
+            ToolStripMenuItem open = new ToolStripMenuItem(L.T("hist.openFolder"));
+            open.Click += delegate { Output.OpenFolder(AppPaths.HistoryDir, null); };
+            recent.DropDownItems.Add(open);
+            ToolStripMenuItem clear = new ToolStripMenuItem(L.T("hist.clear"));
+            clear.Enabled = items.Count > 0;
+            clear.Click += delegate { History.Clear(); };
+            recent.DropDownItems.Add(clear);
+            Theme.Apply(recent.DropDown);
+        }
+
+        // Nedtælling, så man kan åbne en menu eller holde musen over noget, før billedet tages.
+        void CaptureDelayed(int seconds)
+        {
+            int left = seconds;
+            System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
+            t.Interval = 1000;
+            Toast.ShowText(L.T("delay.countdown", left), false);
+            t.Tick += delegate
+            {
+                left--;
+                if (left > 0) { Toast.ShowText(L.T("delay.countdown", left), false); return; }
+                t.Stop();
+                t.Dispose();
+                DoCapture(Mode.Region, false);
+            };
+            t.Start();
         }
 
         public void OpenPreview(Shot shot)

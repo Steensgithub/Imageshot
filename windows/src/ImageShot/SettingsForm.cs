@@ -25,7 +25,7 @@ namespace ImageShot
         readonly Label resLabel = new Label();
         readonly ComboBox format = new ComboBox();
         readonly RadioButton rbShow = new RadioButton(), rbCopy = new RadioButton(), rbSave = new RadioButton();
-        readonly CheckBox autoClose = new CheckBox(), startup = new CheckBox(), alwaysDx = new CheckBox();
+        readonly CheckBox autoClose = new CheckBox(), startup = new CheckBox(), alwaysDx = new CheckBox(), history = new CheckBox();
         readonly TextBox folder = new TextBox(), template = new TextBox();
         readonly Label example = new Label();
         readonly ComboBox language = new ComboBox(), theme = new ComboBox();
@@ -172,6 +172,10 @@ namespace ImageShot
             startup.AutoSize = true;
             startup.Checked = App.GetStartup();
             Span(r, startup);
+            history.Text = L.T("set.history");
+            history.AutoSize = true;
+            history.Checked = s.KeepHistory;
+            Span(r, history);
             alwaysDx.Text = L.T("set.alwaysDx");
             alwaysDx.AutoSize = true;
             alwaysDx.Checked = s.AlwaysDx;
@@ -288,6 +292,7 @@ namespace ImageShot
             s.AutoClose = autoClose.Checked;
             s.Folder = dir;
             s.AlwaysDx = alwaysDx.Checked;
+            s.KeepHistory = history.Checked;
             s.FileTemplate = template.Text.Trim().Length == 0 ? Output.DefaultTemplate : template.Text.Trim();
             s.Language = language.SelectedIndex <= 0 ? "auto" : L.Languages[language.SelectedIndex - 1];
             s.Theme = theme.SelectedIndex == 1 ? "light" : theme.SelectedIndex == 2 ? "dark" : "auto";
