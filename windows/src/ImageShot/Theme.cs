@@ -137,7 +137,7 @@ namespace ImageShot
         // Systembakkens menu i samme udseende.
         public static void Apply(ToolStrip m)
         {
-            m.Renderer = new ToolStripProfessionalRenderer(new MenuColors());
+            m.Renderer = new ToolStripProfessionalRenderer(new MenuColors()) { RoundedEdges = false };
             m.BackColor = Surface;
             m.ForeColor = Text;
             foreach (ToolStripItem it in m.Items) it.ForeColor = Text;
@@ -150,6 +150,22 @@ namespace ImageShot
             public override Color ImageMarginGradientMiddle { get { return Surface; } }
             public override Color ImageMarginGradientEnd { get { return Surface; } }
             public override Color MenuBorder { get { return Border; } }
+            public override Color ToolStripBorder { get { return Back; } }
+            public override Color ToolStripGradientBegin { get { return Back; } }
+            public override Color ToolStripGradientMiddle { get { return Back; } }
+            public override Color ToolStripGradientEnd { get { return Back; } }
+            public override Color ButtonSelectedHighlight { get { return Hover; } }
+            public override Color ButtonSelectedGradientBegin { get { return Hover; } }
+            public override Color ButtonSelectedGradientMiddle { get { return Hover; } }
+            public override Color ButtonSelectedGradientEnd { get { return Hover; } }
+            public override Color ButtonSelectedBorder { get { return Accent; } }
+            public override Color ButtonCheckedGradientBegin { get { return Hover; } }
+            public override Color ButtonCheckedGradientMiddle { get { return Hover; } }
+            public override Color ButtonCheckedGradientEnd { get { return Hover; } }
+            public override Color ButtonCheckedHighlight { get { return Hover; } }
+            public override Color ButtonPressedGradientBegin { get { return Hover; } }
+            public override Color ButtonPressedGradientMiddle { get { return Hover; } }
+            public override Color ButtonPressedGradientEnd { get { return Hover; } }
             public override Color MenuItemBorder { get { return Hover; } }
             public override Color MenuItemSelected { get { return Hover; } }
             public override Color MenuItemSelectedGradientBegin { get { return Hover; } }

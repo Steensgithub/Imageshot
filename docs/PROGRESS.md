@@ -25,4 +25,5 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - Fase 2 (b73616c): markering skalerer tekst pr. skærm-DPI, hukommelse frigives efter optagelse (selvtest: 26→26 MB efter 8 optagelser), DirectX-sessioner testet pr. skærm. DXGI var allerede isoleret (HandleProcessCorruptedStateExceptions + GDI-reserve).
 - Fase 3 (6eb3e15, 48a1e00): nyt ikon (brand/make_icon.py), Theme.cs (auto/lyst/mørkt, mørke listefelter, menu), indstillinger i 2 kolonner med sprog/udseende/filnavneskabelon, lup + piletaster i markering. Udvidelsen havde allerede brandfarver + mørk tilstand.
 - CI lægger skærmbilleder på grenene ci-shots-windows / ci-shots-extension (hent: git fetch origin ci-shots-windows; git archive … | tar -x). Bruges til visuel kontrol.
-- Næste: Fase 4 – editor med tegneværktøjer (pil, firkant, ellipse, overstreg, tekst, nummer, slør), fastgør, forsinkelse, historik, OCR; derefter udvidelsens editor.
+- Fase 4 Windows (7fa5598): editor (Shapes.cs/Doc, ImageView, Icons, PreviewForm), OCR (Ocr.cs, WINRT + Microsoft.Windows.SDK.Contracts), PinWindow, History (30 seneste, menu Seneste), forsinkelse 3/5/10 s, filnavneskabelon. Alle selvtests grønne inkl. OCR på CI.
+- Næste: Fase 4 udvidelse – tegneværktøjer + slør i clipboard.html; derefter Fase 5.

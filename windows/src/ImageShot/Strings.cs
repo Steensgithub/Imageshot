@@ -87,7 +87,7 @@ namespace ImageShot
             ["overlay.escCancels"] = new[] { "Esc annullerer", "Esc cancels", "Esc bricht ab", "Esc cancela" },
 
             // --- Udklipsholder / editor
-            ["preview.title"] = new[] { "ImageShot – udklipsholder", "ImageShot – clipboard", "ImageShot – Zwischenablage", "ImageShot – portapapeles" },
+            ["preview.title"] = new[] { "ImageShot – rediger", "ImageShot – editor", "ImageShot – Editor", "ImageShot – editor" },
             ["preview.copy"] = new[] { "Kopiér", "Copy", "Kopieren", "Copiar" },
             ["preview.crop"] = new[] { "Tilskær", "Crop", "Zuschneiden", "Recortar" },
             ["preview.applyCrop"] = new[] { "Anvend tilskæring", "Apply crop", "Zuschnitt anwenden", "Aplicar recorte" },
