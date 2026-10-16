@@ -25,7 +25,7 @@
     p.className = 'empty';
     p.textContent = skbT('captureGone');
     $('shots').replaceChildren(p);
-    $('copyMain').disabled = $('saveMain').disabled = $('cropMain').disabled = true;
+    $('copyMain').disabled = $('saveMain').disabled = $('cropMain').disabled = $('drawMain').disabled = true;
     return;
   }
 
@@ -61,7 +61,7 @@
         <div class="info"><b></b><span></span></div>
       </div>`;
     if (multi) {
-      for (const [act, key] of [['copy', 'btnCopy'], ['crop', 'btnCrop'], ['save', 'btnSave']]) {
+      for (const [act, key] of [['copy', 'btnCopy'], ['draw', 'btnDraw'], ['crop', 'btnCrop'], ['save', 'btnSave']]) {
         const b = document.createElement('button');
         b.className = 'btn';
         b.dataset.act = act;
@@ -73,6 +73,7 @@
     el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', async () => {
       if (b.dataset.act === 'copy') await copy(img, false);
       else if (b.dataset.act === 'crop') openCrop(img);
+      else if (b.dataset.act === 'draw') await openDraw(img);
       else await save([img], false);
     }));
     cards.set(img, el);
@@ -84,17 +85,19 @@
     const el = cards.get(img);
     el.querySelector('img').src = img.url;
     el.querySelector('.info span').textContent =
-      `${img.width} × ${img.height} px · ${img.ext.toUpperCase()} · ${kb(img.size)}${img.crop ? ' · ' + skbT('cropped') : ''}`;
+      `${img.width} × ${img.height} px · ${img.ext.toUpperCase()} · ${kb(img.size)}${img.crop ? ' · ' + skbT('cropped') : ''}${img.drawn ? ' · ' + skbT('drawn') : ''}`;
   }
 
   if (multi) {
     $('copyMain').hidden = true;
     $('cropMain').hidden = true;
+    $('drawMain').hidden = true;
     $('saveMain').textContent = skbT('btnSaveAll', images.length);
     $('saveMain').classList.add('primary');
   }
   $('copyMain').addEventListener('click', () => copy(images[0], true));
   $('cropMain').addEventListener('click', () => openCrop(images[0]));
+  $('drawMain').addEventListener('click', () => openDraw(images[0]));
   $('undoMain').addEventListener('click', undo);
   $('saveMain').addEventListener('click', () => save(images, true));
 
@@ -311,7 +314,7 @@
     closeCrop();
     busy = true;
     try {
-      const before = { img, crop: img.crop, blob: img.blob, url: img.url, width: img.width, height: img.height, size: img.size };
+      const before = snapshot(img);
       await encodeCrop(img, r);
       history.push(before);
       $('undoMain').hidden = false;
@@ -343,11 +346,42 @@
     img.crop = r;
   }
 
+  const snapshot = img => ({ img, orig: img.orig, crop: img.crop, drawn: img.drawn, blob: img.blob, url: img.url, width: img.width, height: img.height, size: img.size });
+
+  // ---- Draw ----
+  async function openDraw(img) {
+    if (busy || skbDraw.active) return;
+    const canvas = await skbDraw.open(img.blob);
+    if (!canvas) return;
+    busy = true;
+    try {
+      const before = snapshot(img);
+      const c = canvas;
+      if (img.mime === 'image/jpeg') {
+        // JPEG has no transparency – put a white background underneath.
+        const g = c.getContext('2d'); g.globalCompositeOperation = 'destination-over'; g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      }
+      const q = skbQuality(settings);
+      const blob = await new Promise(res => c.toBlob(res, img.mime, q.quality));
+      if (!blob) throw new Error(skbT('encodeFail'));
+      // The drawing becomes the new base image, so a later crop keeps it.
+      Object.assign(img, { blob, orig: blob, crop: null, url: objectUrl(blob), size: blob.size, width: c.width, height: c.height, drawn: true });
+      history.push(before);
+      $('undoMain').hidden = false;
+      render(img);
+      toast(skbT('toastDrawn'));
+    } catch (e) {
+      toast(skbT('toastCropFail', e.message || e), true);
+    } finally {
+      busy = false;
+    }
+  }
+
   function undo() {
     if (busy) return;
     const h = history.pop();
     if (!h) return;
-    Object.assign(h.img, { crop: h.crop, blob: h.blob, url: h.url, width: h.width, height: h.height, size: h.size });
+    Object.assign(h.img, { orig: h.orig, crop: h.crop, drawn: h.drawn, blob: h.blob, url: h.url, width: h.width, height: h.height, size: h.size });
     render(h.img);
     $('undoMain').hidden = history.length === 0;
     toast(skbT('toastUndone'));

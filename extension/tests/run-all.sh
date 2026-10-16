@@ -52,7 +52,7 @@ done < <(find "$EXT" -name '*.js' -not -path '*/node_modules/*' -print0)
 echo "=== static-check.js"
 node "${HERE}/static-check.js" || failed+=("static-check.js")
 
-for t in run.js crop.js region.js esc.js tabs.js locale.js; do
+for t in run.js crop.js draw.js region.js esc.js tabs.js locale.js; do
   echo
   echo "=== ${t}"
   if timeout 300 xvfb-run -a -s "-screen 0 1280x900x24" node "${HERE}/${t}"; then

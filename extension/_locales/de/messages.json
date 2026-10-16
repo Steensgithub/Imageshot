@@ -368,5 +368,50 @@
   "unknownTab": {
     "message": "Unbekannter Tab",
     "description": "Fallback tab name."
+  },
+  "btnDraw": {
+    "message": "Zeichnen"
+  },
+  "drawApply": {
+    "message": "Anwenden (Enter)"
+  },
+  "toastDrawn": {
+    "message": "Zeichnung hinzugefügt"
+  },
+  "toolRedo": {
+    "message": "Wiederholen"
+  },
+  "toolColor": {
+    "message": "Farbe"
+  },
+  "toolTextPrompt": {
+    "message": "Text eingeben, Enter drücken"
+  },
+  "tool_arrow": {
+    "message": "Pfeil"
+  },
+  "tool_rect": {
+    "message": "Rechteck"
+  },
+  "tool_ellipse": {
+    "message": "Ellipse"
+  },
+  "tool_highlight": {
+    "message": "Markieren"
+  },
+  "tool_text": {
+    "message": "Text"
+  },
+  "tool_step": {
+    "message": "Schrittnummer"
+  },
+  "tool_blur": {
+    "message": "Weichzeichnen"
+  },
+  "tool_pixelate": {
+    "message": "Verpixeln"
+  },
+  "drawn": {
+    "message": "bemalt"
   }
 }

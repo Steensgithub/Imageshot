@@ -12,6 +12,7 @@
       <h1 data-i18n="clipHeading"></h1>
     </div>
     <button class="btn primary" id="copyMain" data-i18n="btnCopy"></button>
+    <button class="btn" id="drawMain" data-i18n="btnDraw"></button>
     <button class="btn" id="cropMain" data-i18n="btnCrop"></button>
     <button class="btn" id="undoMain" hidden title="Ctrl+Z" data-i18n="btnUndoCrop"></button>
     <button class="btn" id="saveMain" data-i18n="btnSaveFile"></button>
@@ -47,11 +48,23 @@
     </div>
   </div>
 
+  <div class="crop" id="draw" hidden>
+    <div class="crop-bar">
+      <b data-i18n="btnDraw"></b>
+      <div class="draw-tools" id="drawTools"></div>
+      <span class="spacer"></span>
+      <button class="btn" id="drawCancel" data-i18n="cropCancel"></button>
+      <button class="btn primary" id="drawApply" data-i18n="drawApply"></button>
+    </div>
+    <div class="crop-stage" id="drawStage" tabindex="-1"></div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script src="settings.js"></script>
   <script src="store.js"></script>
   <script src="i18n.js"></script>
+  <script src="draw.js"></script>
   <script src="clipboard.js"></script>
 </body>
 </html>

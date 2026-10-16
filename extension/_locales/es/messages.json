@@ -368,5 +368,50 @@
   "unknownTab": {
     "message": "Pestaña desconocida",
     "description": "Fallback tab name."
+  },
+  "btnDraw": {
+    "message": "Dibujar"
+  },
+  "drawApply": {
+    "message": "Aplicar (Intro)"
+  },
+  "toastDrawn": {
+    "message": "Dibujo añadido"
+  },
+  "toolRedo": {
+    "message": "Rehacer"
+  },
+  "toolColor": {
+    "message": "Color"
+  },
+  "toolTextPrompt": {
+    "message": "Escribe y pulsa Intro"
+  },
+  "tool_arrow": {
+    "message": "Flecha"
+  },
+  "tool_rect": {
+    "message": "Rectángulo"
+  },
+  "tool_ellipse": {
+    "message": "Elipse"
+  },
+  "tool_highlight": {
+    "message": "Resaltar"
+  },
+  "tool_text": {
+    "message": "Texto"
+  },
+  "tool_step": {
+    "message": "Número de paso"
+  },
+  "tool_blur": {
+    "message": "Difuminar"
+  },
+  "tool_pixelate": {
+    "message": "Pixelar"
+  },
+  "drawn": {
+    "message": "con dibujo"
   }
 }

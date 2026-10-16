@@ -368,5 +368,50 @@
   "unknownTab": {
     "message": "Ukendt fane",
     "description": "Fallback tab name."
+  },
+  "btnDraw": {
+    "message": "Tegn"
+  },
+  "drawApply": {
+    "message": "Anvend (Enter)"
+  },
+  "toastDrawn": {
+    "message": "Tegningen er tilføjet"
+  },
+  "toolRedo": {
+    "message": "Annullér fortryd"
+  },
+  "toolColor": {
+    "message": "Farve"
+  },
+  "toolTextPrompt": {
+    "message": "Skriv tekst, tryk Enter"
+  },
+  "tool_arrow": {
+    "message": "Pil"
+  },
+  "tool_rect": {
+    "message": "Firkant"
+  },
+  "tool_ellipse": {
+    "message": "Cirkel"
+  },
+  "tool_highlight": {
+    "message": "Overstreg"
+  },
+  "tool_text": {
+    "message": "Tekst"
+  },
+  "tool_step": {
+    "message": "Trinnummer"
+  },
+  "tool_blur": {
+    "message": "Slør"
+  },
+  "tool_pixelate": {
+    "message": "Pixelér"
+  },
+  "drawn": {
+    "message": "tegnet på"
   }
 }

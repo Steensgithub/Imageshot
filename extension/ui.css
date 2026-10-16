@@ -200,3 +200,25 @@ body.clip { padding: 18px 20px 20px; min-height: 100vh; display: flex; flex-dire
 .crop-sel i[data-h="s"]  { left: 50%; top: 100%; cursor: ns-resize; }
 .crop-sel i[data-h="sw"] { left: 0; top: 100%; cursor: nesw-resize; }
 .crop-sel i[data-h="w"]  { left: 0; top: 50%; cursor: ew-resize; }
+
+/* ---------- Drawing tools ---------- */
+.draw-tools { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.draw-tools .sep { width: 1px; height: 24px; background: var(--line); margin: 0 6px; }
+.draw-tools button {
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid transparent; background: transparent;
+  color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.draw-tools button:hover { background: var(--primary-soft); }
+.draw-tools button.on { background: var(--primary-soft); border-color: var(--primary); }
+.draw-tools button:disabled { opacity: .35; cursor: default; background: transparent; }
+.draw-tools .swatch::before {
+  content: ""; width: 18px; height: 18px; border-radius: 50%; background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(128,128,128,.5);
+}
+.draw-tools .width i { display: block; width: 18px; border-radius: 9px; background: currentColor; }
+.draw-canvas { position: absolute; box-shadow: 0 2px 14px rgba(0,0,0,.5); }
+.draw-text {
+  position: fixed; z-index: 20; min-width: 180px; padding: 2px 6px; transform: translateY(-2px);
+  border: 1.5px solid var(--primary); border-radius: 4px; background: rgba(255,255,255,.96); outline: none;
+}
+.crop-bar .spacer { flex: 1; }
