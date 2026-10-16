@@ -15,7 +15,7 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - [x] Fase 2 – stabil motor
 - [x] Fase 3 – udseende (tema, lup, nyt ikon)
 - [x] Fase 4 – funktioner (tegneværktøjer, slør, historik, OCR, forsinkelse, fastgør, filnavne)
-- [ ] Fase 5 – udgivelse (installer, opdatering, signering, Chrome Web Store)
+- [x] Fase 5 – udgivelse (installer, opdatering, signering forberedt, Chrome Web Store-pakke og tekster)
 
 ## Log
 - Udvidelsen: omdøbt, 4 sprog, IndexedDB-lager, færre tilladelser, 7 Playwright-tests grønne.
@@ -27,4 +27,10 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - CI lægger skærmbilleder på grenene ci-shots-windows / ci-shots-extension (hent: git fetch origin ci-shots-windows; git archive … | tar -x). Bruges til visuel kontrol.
 - Fase 4 Windows (7fa5598): editor (Shapes.cs/Doc, ImageView, Icons, PreviewForm), OCR (Ocr.cs, WINRT + Microsoft.Windows.SDK.Contracts), PinWindow, History (30 seneste, menu Seneste), forsinkelse 3/5/10 s, filnavneskabelon. Alle selvtests grønne inkl. OCR på CI.
 - Fase 4 udvidelse (3d48d5f): draw.js med 8 værktøjer, test draw.js grøn.
-- Næste: Fase 5 – Inno Setup-installer i CI, udgivelses-workflow (tag v*), opdateringstjek, signering forberedt, Chrome Web Store-pakke + tekster + privatlivspolitik.
+- Fase 5 (6581fb6): installer/ImageShot.iss, build/package.ps1, Updater.cs, release.yml (signering via Azure Trusted Signing når hemmeligheder findes), installations-/afinstallationstest i CI, docs/SIGNING.md, docs/PRIVACY.md, docs/store/, docs/releases/2.0.0.md. Byggede filer på grenen ci-build; leveret til brugeren som 2.0.0.
+
+## Åbne beslutninger (brugerens)
+- Hvor udgivelser skal ligge offentligt (arkivet er privat → opdateringstjek og downloadlinks virker først, når arkivet eller et separat udgivelsesarkiv er offentligt; ret Updater.Repo).
+- Kodesignering: Azure Trusted Signing (~10 USD/md.) eller certifikat – se docs/SIGNING.md.
+- Udgivelse i Chrome Web Store (udviklerkonto 5 USD) – tekster klar i docs/store/.
+- Brugeren skal teste 2.0.0 på sin egen Windows 10 med 2 skærme/HDR.
