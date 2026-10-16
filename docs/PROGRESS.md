@@ -14,7 +14,7 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - [x] Fase 1 – fundament: struktur, CI, tests, selvtest, fejllog, sprog, Win11-PrtScn, Om-side
 - [x] Fase 2 – stabil motor
 - [x] Fase 3 – udseende (tema, lup, nyt ikon)
-- [ ] Fase 4 – funktioner (tegneværktøjer, slør, historik, OCR, forsinkelse, fastgør, filnavne)
+- [x] Fase 4 – funktioner (tegneværktøjer, slør, historik, OCR, forsinkelse, fastgør, filnavne)
 - [ ] Fase 5 – udgivelse (installer, opdatering, signering, Chrome Web Store)
 
 ## Log
@@ -26,4 +26,5 @@ Mål: gøre værktøjet professionelt, så andre kan bruge det. Rækkefølge og 
 - Fase 3 (6eb3e15, 48a1e00): nyt ikon (brand/make_icon.py), Theme.cs (auto/lyst/mørkt, mørke listefelter, menu), indstillinger i 2 kolonner med sprog/udseende/filnavneskabelon, lup + piletaster i markering. Udvidelsen havde allerede brandfarver + mørk tilstand.
 - CI lægger skærmbilleder på grenene ci-shots-windows / ci-shots-extension (hent: git fetch origin ci-shots-windows; git archive … | tar -x). Bruges til visuel kontrol.
 - Fase 4 Windows (7fa5598): editor (Shapes.cs/Doc, ImageView, Icons, PreviewForm), OCR (Ocr.cs, WINRT + Microsoft.Windows.SDK.Contracts), PinWindow, History (30 seneste, menu Seneste), forsinkelse 3/5/10 s, filnavneskabelon. Alle selvtests grønne inkl. OCR på CI.
-- Næste: Fase 4 udvidelse – tegneværktøjer + slør i clipboard.html; derefter Fase 5.
+- Fase 4 udvidelse (3d48d5f): draw.js med 8 værktøjer, test draw.js grøn.
+- Næste: Fase 5 – Inno Setup-installer i CI, udgivelses-workflow (tag v*), opdateringstjek, signering forberedt, Chrome Web Store-pakke + tekster + privatlivspolitik.
