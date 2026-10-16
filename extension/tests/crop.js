@@ -30,7 +30,12 @@ const near = (a, b) => a && a.every((v, i) => Math.abs(v - b[i]) <= 12);
 
   const waitCropped = async () => poll(async () => (await info()).includes('cropped'), { timeout: 4000 });
   const pixels = () => page.evaluate(async () => {
-    const im = document.querySelector('.shot img'); await im.decode();
+    // Billedet kan blive skiftet ud, mens det afkodes (ny tilskæring/fortryd) – prøv igen.
+    let im;
+    for (let i = 0; ; i++) {
+      im = document.querySelector('.shot img');
+      try { await im.decode(); break; } catch (e) { if (i >= 20) throw e; await new Promise(r => setTimeout(r, 100)); }
+    }
     const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
     const g = c.getContext('2d'); g.drawImage(im, 0, 0);
     const at = (x, y) => Array.from(g.getImageData(x, y, 1, 1).data.slice(0, 3));
