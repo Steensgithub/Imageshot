@@ -54,13 +54,13 @@ namespace ImageShot
             outer.ColumnCount = 2;
             outer.Padding = new Padding(16, 8, 16, 12);
             TableLayoutPanel t = Column(), r = Column();
-            r.Margin = new Padding(28, 0, 0, 0);
+            r.Margin = new Padding(20, 0, 0, 0);
 
             if (firstRun)
             {
                 Label intro = new Label();
                 intro.AutoSize = true;
-                intro.MaximumSize = new Size(900, 0);
+                intro.MaximumSize = new Size(760, 0);
                 intro.Margin = new Padding(0, 8, 0, 4);
                 intro.Text = L.T("set.intro");
                 outer.Controls.Add(intro, 0, 0);
@@ -76,19 +76,20 @@ namespace ImageShot
             Row(t, L.T("mode.screen") + ":", hkScreen);
             Row(t, L.T("mode.all") + ":", hkAll);
             Label hkNote = FormHelp.Note(L.T("set.hkNote"));
-            hkNote.MaximumSize = new Size(420, 0);
+            hkNote.MaximumSize = new Size(380, 0);
             Span(t, hkNote);
             hkRegion.Value = s.HkRegion; hkWindow.Value = s.HkWindow; hkScreen.Value = s.HkScreen; hkAll.Value = s.HkAll;
 
             Span(t, FormHelp.Heading(L.T("set.image")));
             res.Minimum = 0; res.Maximum = 100; res.TickFrequency = 10; res.SmallChange = 5; res.LargeChange = 10;
-            res.Width = 260;
+            res.Width = 220;
             res.Value = s.Resolution;
             res.ValueChanged += delegate { UpdateRes(); };
             Row(t, L.T("set.resolution") + ":", res);
             resLabel.AutoSize = true;
             resLabel.ForeColor = SystemColors.GrayText;
             resLabel.Margin = new Padding(3, 0, 3, 6);
+            resLabel.MaximumSize = new Size(280, 0);
             t.Controls.Add(new Label(), 0, t.RowCount);
             t.Controls.Add(resLabel, 1, t.RowCount);
             t.RowCount++;
@@ -109,7 +110,7 @@ namespace ImageShot
             rbSave.Checked = s.AfterCapture == "save";
             autoClose.Text = L.T("set.autoClose");
             autoClose.AutoSize = true;
-            autoClose.MaximumSize = new Size(420, 0);
+            autoClose.MaximumSize = new Size(380, 0);
             autoClose.Checked = s.AutoClose;
             autoClose.Margin = new Padding(3, 8, 3, 4);
             Span(t, autoClose);
@@ -120,7 +121,7 @@ namespace ImageShot
             fp.AutoSize = true;
             fp.WrapContents = false;
             fp.Margin = Padding.Empty;
-            folder.Width = 300;
+            folder.Width = 250;
             folder.Text = s.Folder;
             Button browse = new Button();
             browse.Text = L.T("set.browse");
@@ -140,16 +141,16 @@ namespace ImageShot
 
             Label fnHead = new Label { Text = L.T("set.fileName") + ":", AutoSize = true, Margin = new Padding(3, 10, 3, 2) };
             Span(r, fnHead);
-            template.Width = 300;
+            template.Width = 250;
             template.Text = s.FileTemplate;
             template.TextChanged += delegate { UpdateExample(); };
             Span(r, template);
             example.AutoSize = true;
             example.ForeColor = SystemColors.GrayText;
-            example.MaximumSize = new Size(400, 0);
+            example.MaximumSize = new Size(340, 0);
             Span(r, example);
             Label fnNote = FormHelp.Note(L.T("set.fileNameNote"));
-            fnNote.MaximumSize = new Size(400, 0);
+            fnNote.MaximumSize = new Size(340, 0);
             Span(r, fnNote);
 
             Span(r, FormHelp.Heading(L.T("set.theme")));
@@ -176,7 +177,7 @@ namespace ImageShot
             alwaysDx.Checked = s.AlwaysDx;
             Span(r, alwaysDx);
             Label dxNote = FormHelp.Note(L.T("set.alwaysDxNote"));
-            dxNote.MaximumSize = new Size(400, 0);
+            dxNote.MaximumSize = new Size(340, 0);
             Span(r, dxNote);
 
             FlowLayoutPanel bp = new FlowLayoutPanel();

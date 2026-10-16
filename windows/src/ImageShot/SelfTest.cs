@@ -247,6 +247,28 @@ namespace ImageShot
                 return n + " billeder i ui\\";
             });
 
+            Check("Markering: værktøjslinje, lup og piletaster", delegate
+            {
+                Rectangle vs = SystemInformation.VirtualScreen;
+                using (Bitmap fr = Capture.Freeze(false))
+                using (RegionOverlay ov = new RegionOverlay(fr, vs, Capture.Windows(), null))
+                {
+                    Rectangle pb = Screen.PrimaryScreen.Bounds;
+                    Cursor.Position = new Point(pb.Left + pb.Width / 3, pb.Top + pb.Height / 2);
+                    ov.Show();
+                    for (int i = 0; i < 10; i++) { Application.DoEvents(); System.Threading.Thread.Sleep(30); }
+                    Point before = Cursor.Position;
+                    SendKeys.SendWait("{RIGHT}{RIGHT}+{DOWN}");
+                    for (int i = 0; i < 10; i++) { Application.DoEvents(); System.Threading.Thread.Sleep(30); }
+                    Point after = Cursor.Position;
+                    using (Bitmap shot = Capture.Freeze(false)) shot.Save(Path.Combine(outDir, "ui", "overlay.png"), ImageFormat.Png);
+                    ov.Close();
+                    string moved = (after.X - before.X) + "," + (after.Y - before.Y);
+                    if (moved != "2,10") throw new Exception("piletaster flyttede musen " + moved + " (forventet 2,10)");
+                    return "mus flyttet " + moved;
+                }
+            });
+
             Check("Tastaturhook kan installeres og fjernes", delegate
             {
                 using (Control c = new Control())

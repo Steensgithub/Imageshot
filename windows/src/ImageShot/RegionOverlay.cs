@@ -146,6 +146,9 @@ namespace ImageShot
             mon.Offset(-vs.Left, -vs.Top);
             LayoutToolbar(mon);
             UpdateHover(p);
+            cursorC = p;
+            loupeVisible = !hintRect.Contains(p);
+            lastDeco = Deco();
             Invalidate();
         }
 
@@ -237,9 +240,82 @@ namespace ImageShot
         Rectangle Deco()
         {
             Rectangle hi = Highlight;
-            if (hi.IsEmpty) return Rectangle.Empty;
-            Rectangle d = Rectangle.Inflate(hi, 4, 4);
-            return Rectangle.Union(d, Rectangle.Inflate(LabelRect(hi), 2, 2));
+            Rectangle d = Rectangle.Empty;
+            if (!hi.IsEmpty)
+                d = Rectangle.Union(Rectangle.Inflate(hi, 4, 4), Rectangle.Inflate(LabelRect(hi), 2, 2));
+            Rectangle lp = LoupeRect();
+            if (!lp.IsEmpty) d = d.IsEmpty ? Rectangle.Inflate(lp, 2, 2) : Rectangle.Union(d, Rectangle.Inflate(lp, 2, 2));
+            return d;
+        }
+
+        // ---- Lup: forstørrer pixels omkring musen, så man kan ramme præcist
+        const int LoupeCells = 15;   // ulige: midterpixlen er musens
+        Point cursorC = new Point(-1, -1);
+        bool loupeVisible;
+
+        Rectangle LoupeRect()
+        {
+            if (!loupeVisible) return Rectangle.Empty;
+            int box = LS(LoupeCells * 9), info = LS(22), off = LS(22);
+            int w = box, h = box + info;
+            Rectangle mon = Screen.FromPoint(new Point(cursorC.X + vs.Left, cursorC.Y + vs.Top)).Bounds;
+            mon.Offset(-vs.Left, -vs.Top);
+            int x = cursorC.X + off, y = cursorC.Y + off;
+            if (x + w > mon.Right) x = cursorC.X - off - w;
+            if (y + h > mon.Bottom) y = cursorC.Y - off - h;
+            return new Rectangle(x, y, w, h);
+        }
+
+        void PaintLoupe(Graphics g)
+        {
+            Rectangle r = LoupeRect();
+            if (r.IsEmpty) return;
+            int box = r.Width;
+            Rectangle img = new Rectangle(r.X, r.Y, box, box);
+            g.CompositingMode = CompositingMode.SourceCopy;
+            using (SolidBrush bg = new SolidBrush(Color.FromArgb(32, 33, 36))) g.FillRectangle(bg, r);
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
+            int half = LoupeCells / 2;
+            Rectangle src = new Rectangle(cursorC.X - half, cursorC.Y - half, LoupeCells, LoupeCells);
+            g.DrawImage(bright, img, src, GraphicsUnit.Pixel);
+            g.PixelOffsetMode = PixelOffsetMode.Default;
+            g.CompositingMode = CompositingMode.SourceOver;
+            float cell = box / (float)LoupeCells;
+            RectangleF c = new RectangleF(img.X + half * cell, img.Y + half * cell, cell, cell);
+            using (Pen dark = new Pen(Color.FromArgb(180, 0, 0, 0), 1f))
+            using (Pen light = new Pen(Color.White, 1f))
+            {
+                g.DrawRectangle(dark, c.X - 1, c.Y - 1, c.Width + 1, c.Height + 1);
+                g.DrawRectangle(light, c.X, c.Y, c.Width - 1, c.Height - 1);
+            }
+            using (Pen p = new Pen(accent, 2f)) g.DrawRectangle(p, r.X - 1, r.Y - 1, r.Width + 1, r.Height + 1);
+            string txt = (cursorC.X + vs.Left) + ", " + (cursorC.Y + vs.Top);
+            if (cursorC.X >= 0 && cursorC.Y >= 0 && cursorC.X < bright.Width && cursorC.Y < bright.Height)
+            {
+                Color px = bright.GetPixel(cursorC.X, cursorC.Y);
+                txt += "   #" + px.R.ToString("X2") + px.G.ToString("X2") + px.B.ToString("X2");
+            }
+            Rectangle tr = new Rectangle(r.X, r.Y + box, r.Width, r.Height - box);
+            TextRenderer.DrawText(g, txt, labelFont, tr, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+        }
+
+        // Piletaster flytter musen 1 pixel (Shift: 10) – også mens der trækkes.
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            Keys k = keyData & Keys.KeyCode;
+            if (!live && (k == Keys.Left || k == Keys.Right || k == Keys.Up || k == Keys.Down))
+            {
+                int step = (keyData & Keys.Shift) != 0 ? 10 : 1;
+                Point p = Cursor.Position;
+                if (k == Keys.Left) p.X -= step;
+                if (k == Keys.Right) p.X += step;
+                if (k == Keys.Up) p.Y -= step;
+                if (k == Keys.Down) p.Y += step;
+                Cursor.Position = p;
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         void Refresh2()
@@ -296,6 +372,9 @@ namespace ImageShot
                 TextRenderer.DrawText(g, SubHint, font, sr, Color.FromArgb(200, 200, 200),
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             }
+
+            Rectangle lpr = LoupeRect();
+            if (!lpr.IsEmpty && Rectangle.Inflate(lpr, 2, 2).IntersectsWith(clip)) PaintLoupe(g);
         }
 
         static GraphicsPath Rounded(Rectangle r, int radius)
@@ -338,6 +417,8 @@ namespace ImageShot
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (live) return;
+            cursorC = e.Location;
+            loupeVisible = !(showHint && hintRect.Contains(e.Location) && !dragging);
             if (dragging)
             {
                 int x1 = Math.Min(start.X, e.X), y1 = Math.Min(start.Y, e.Y);
@@ -351,6 +432,7 @@ namespace ImageShot
                 if (showHint && hintRect.Contains(e.Location))
                 {
                     Cursor = t >= 0 ? Cursors.Hand : Cursors.Default;
+                    Refresh2();
                     return;
                 }
                 Cursor = Cursors.Cross;
@@ -500,6 +582,7 @@ namespace ImageShot
             startC = Math.Max(0, Math.Min(band.Height - 1, startScreen.Y - band.Top));
             endC = startC;
             live = true;
+            loupeVisible = false;
 
             // Gør overlejringen usynlig, men behold musen, så programmet nedenunder ikke får klik.
             try

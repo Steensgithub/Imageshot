@@ -93,7 +93,15 @@ namespace ImageShot
                     c.BackColor = Surface;
                     c.ForeColor = Text;
                     if (c is TextBox) ((TextBox)c).BorderStyle = BorderStyle.FixedSingle;
-                    if (c is ComboBox && Dark) ((ComboBox)c).FlatStyle = FlatStyle.Flat;
+                    if (c is ComboBox && Dark)
+                    {
+                        // Windows tegner altid listefelter lyse; i mørkt tema tegner vi dem selv.
+                        ComboBox cb = (ComboBox)c;
+                        cb.FlatStyle = FlatStyle.Flat;
+                        cb.DrawMode = DrawMode.OwnerDrawFixed;
+                        cb.DrawItem -= DrawCombo;
+                        cb.DrawItem += DrawCombo;
+                    }
                 }
                 else if (c is LinkLabel)
                 {
@@ -110,6 +118,19 @@ namespace ImageShot
                     c.BackColor = Back;
                 }
                 if (c.HasChildren) Walk(f, c.Controls);
+            }
+        }
+
+        static void DrawCombo(object sender, DrawItemEventArgs e)
+        {
+            ComboBox cb = (ComboBox)sender;
+            bool sel = (e.State & DrawItemState.Selected) != 0 && (e.State & DrawItemState.ComboBoxEdit) == 0;
+            using (SolidBrush b = new SolidBrush(sel ? BrandDark : Surface)) e.Graphics.FillRectangle(b, e.Bounds);
+            if (e.Index >= 0)
+            {
+                Rectangle r = e.Bounds; r.X += 3; r.Width -= 3;
+                TextRenderer.DrawText(e.Graphics, cb.GetItemText(cb.Items[e.Index]), cb.Font, r, sel ? Color.White : Text,
+                    TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
             }
         }
 
