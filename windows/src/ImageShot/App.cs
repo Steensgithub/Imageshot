@@ -227,6 +227,7 @@ namespace ImageShot
             {
                 if (frozen != null) frozen.Dispose();
                 busy = false;
+                Memory.Trim();
             }
         }
 

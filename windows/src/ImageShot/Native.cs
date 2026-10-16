@@ -168,6 +168,24 @@ namespace ImageShot
         [DllImport("shell32.dll")] static extern int SHGetKnownFolderPath(ref Guid id, uint flags, IntPtr token, out IntPtr path);
 
         // Per-skærm DPI, så koordinater passer præcist på skærme med skalering (125 %, 150 % …).
+        [DllImport("user32.dll")] static extern IntPtr MonitorFromPoint(POINT pt, uint flags);
+        [DllImport("shcore.dll")] static extern int GetDpiForMonitor(IntPtr mon, int type, out uint x, out uint y);
+
+        // Skærmens egen DPI (96 = 100 %) ved et punkt i skærmkoordinater.
+        public static int DpiAt(System.Drawing.Point p)
+        {
+            try
+            {
+                POINT pt; pt.X = p.X; pt.Y = p.Y;
+                IntPtr mon = MonitorFromPoint(pt, 2);
+                uint x, y;
+                if (mon != IntPtr.Zero && GetDpiForMonitor(mon, 0, out x, out y) == 0 && x >= 48) return (int)x;
+            }
+            catch { }
+            try { using (System.Drawing.Graphics g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) return (int)g.DpiX; } catch { }
+            return 96;
+        }
+
         public static void MakeDpiAware()
         {
             try { if (SetProcessDpiAwarenessContext(new IntPtr(-4))) return; } catch { }

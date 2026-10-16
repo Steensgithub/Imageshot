@@ -74,6 +74,38 @@ namespace ImageShot
                 return "ok – " + t;
             });
 
+            Check("DirectX-forbindelse til hver skærm (bruges under scroll)", delegate
+            {
+                StringBuilder b = new StringBuilder();
+                foreach (Screen s in Screen.AllScreens)
+                {
+                    using (Dxgi.Session ses = Dxgi.OpenSession(s.Bounds))
+                    {
+                        if (ses == null || !ses.Ok) { b.Append(s.DeviceName + ": ingen (" + Dxgi.LastTrace + "); "); continue; }
+                        Rectangle crop = new Rectangle(s.Bounds.X, s.Bounds.Y, Math.Min(300, s.Bounds.Width), Math.Min(200, s.Bounds.Height));
+                        Bitmap f = ses.Next(500, crop);
+                        b.Append(s.DeviceName + ": format " + ses.Format + (f == null ? ", intet billede" : ", " + f.Width + "×" + f.Height) + "; ");
+                        if (f != null) f.Dispose();
+                    }
+                }
+                return b.ToString();
+            });
+
+            Check("Ingen hukommelseslæk ved gentagne optagelser", delegate
+            {
+                Memory.Trim();
+                long before = Memory.PrivateMB();
+                for (int i = 0; i < 8; i++)
+                {
+                    using (Bitmap f = Capture.Freeze(false))
+                    using (Bitmap c = Capture.Crop(f, SystemInformation.VirtualScreen, new Rectangle(SystemInformation.VirtualScreen.Location, new Size(200, 200)))) { }
+                    Memory.Trim();
+                }
+                long after = Memory.PrivateMB();
+                if (after - before > 60) throw new Exception("hukommelse voksede " + before + " → " + after + " MB");
+                return before + " → " + after + " MB efter 8 optagelser";
+            });
+
             Check("Beskær, skalér, gem PNG og JPEG", delegate
             {
                 using (Bitmap src = new Bitmap(400, 300, PixelFormat.Format32bppRgb))

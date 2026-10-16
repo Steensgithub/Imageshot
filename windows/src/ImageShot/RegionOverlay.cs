@@ -25,7 +25,9 @@ namespace ImageShot
         readonly Bitmap bright, dim;
         readonly Rectangle vs;
         readonly List<WinInfo> wins;
-        readonly Font font = new Font("Segoe UI", 10f);
+        Font font, bold, labelFont;  // skaleret til den enkelte skærms DPI
+        float sc = 1f, lsc = 1f;     // skala for værktøjslinjen / størrelsesmærket
+        int labelDpi;
         readonly Color accent = Color.FromArgb(0, 120, 215);
 
         bool dragging;
@@ -37,7 +39,6 @@ namespace ImageShot
         Rectangle hintRect;   // værktøjslinjen
         bool showHint = true;
         readonly WinInfo fgWin;
-        readonly Font bold = new Font("Segoe UI Semibold", 10f);
         readonly Rectangle[] toolRects = new Rectangle[5];
         int hoverTool = -1;
         static string[] ToolText { get { return new[] { "1   " + L.T("mode.region"), "2   " + L.T("mode.window"), "3   " + L.T("mode.screen"), "4   " + L.T("mode.all"), "Esc   " + L.T("mode.cancel") }; } }
@@ -99,6 +100,31 @@ namespace ImageShot
             Text = L.T("overlay.title");
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Opaque, true);
             Bounds = vs;
+            SetToolbarDpi(Native.DpiAt(Cursor.Position));
+            SetLabelDpi(Native.DpiAt(Cursor.Position));
+        }
+
+        // 10 punkt ved skærmens egen DPI – ellers bliver teksten forkert stor på en skærm med anden skalering.
+        static Font Px(string face, int dpi) { return new Font(face, 10f * dpi / 72f, GraphicsUnit.Pixel); }
+        int S(int v) { return (int)Math.Round(v * sc); }
+        int LS(int v) { return (int)Math.Round(v * lsc); }
+
+        void SetToolbarDpi(int dpi)
+        {
+            if (font != null) font.Dispose();
+            if (bold != null) bold.Dispose();
+            font = Px("Segoe UI", dpi);
+            bold = Px("Segoe UI Semibold", dpi);
+            sc = dpi / 96f;
+        }
+
+        void SetLabelDpi(int dpi)
+        {
+            if (dpi == labelDpi) return;
+            if (labelFont != null) labelFont.Dispose();
+            labelFont = Px("Segoe UI", dpi);
+            lsc = dpi / 96f;
+            labelDpi = dpi;
         }
 
         protected override void WndProc(ref Message m)
@@ -125,20 +151,20 @@ namespace ImageShot
         // Værktøjslinje øverst på den skærm, musen er på: vælg optagelsestype.
         void LayoutToolbar(Rectangle mon)
         {
-            const int pad = 10, gap = 6;
+            int pad = S(10), gap = S(6);
             Size[] sizes = new Size[ToolText.Length];
             int rowW = 0, rowH = 0;
             for (int i = 0; i < ToolText.Length; i++)
             {
                 Size t = TextRenderer.MeasureText(ToolText[i], bold);
-                sizes[i] = new Size(t.Width + 26, t.Height + 14);
+                sizes[i] = new Size(t.Width + S(26), t.Height + S(14));
                 rowW += sizes[i].Width + (i > 0 ? gap : 0);
                 rowH = Math.Max(rowH, sizes[i].Height);
             }
             Size sub = TextRenderer.MeasureText(SubHint, font);
             int w = Math.Max(rowW, sub.Width) + pad * 2;
-            int h = pad + rowH + 8 + sub.Height + pad;
-            hintRect = new Rectangle(mon.Left + (mon.Width - w) / 2, mon.Top + 24, w, h);
+            int h = pad + rowH + S(8) + sub.Height + pad;
+            hintRect = new Rectangle(mon.Left + (mon.Width - w) / 2, mon.Top + S(24), w, h);
             int x = hintRect.Left + (w - rowW) / 2;
             for (int i = 0; i < ToolText.Length; i++)
             {
@@ -189,6 +215,7 @@ namespace ImageShot
             r.Offset(-vs.Left, -vs.Top);
             hoverWin = found;
             hover = r;
+            if (!dragging) SetLabelDpi(Native.DpiAt(screen));
         }
 
         Rectangle Highlight { get { return dragging ? sel : hover; } }
@@ -196,10 +223,10 @@ namespace ImageShot
         Rectangle LabelRect(Rectangle hi)
         {
             string s = SizeText(hi);
-            Size t = TextRenderer.MeasureText(s, font);
-            int w = t.Width + 12, h = t.Height + 6;
-            int x = hi.Left, y = hi.Bottom + 6;
-            if (y + h > ClientSize.Height) y = hi.Top + 6;
+            Size t = TextRenderer.MeasureText(s, labelFont);
+            int w = t.Width + LS(12), h = t.Height + LS(6);
+            int x = hi.Left, y = hi.Bottom + LS(6);
+            if (y + h > ClientSize.Height) y = hi.Top + LS(6);
             if (x + w > ClientSize.Width) x = ClientSize.Width - w;
             return new Rectangle(Math.Max(0, x), Math.Max(0, y), w, h);
         }
@@ -241,7 +268,7 @@ namespace ImageShot
                 Rectangle lr = LabelRect(hi);
                 using (SolidBrush b = new SolidBrush(Color.FromArgb(230, 32, 33, 36)))
                     g.FillRectangle(b, lr);
-                TextRenderer.DrawText(g, SizeText(hi), font, lr, Color.White,
+                TextRenderer.DrawText(g, SizeText(hi), labelFont, lr, Color.White,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
             }
 
@@ -249,7 +276,7 @@ namespace ImageShot
             {
                 g.CompositingMode = CompositingMode.SourceOver;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
-                using (GraphicsPath path = Rounded(hintRect, 10))
+                using (GraphicsPath path = Rounded(hintRect, S(10)))
                 using (SolidBrush b = new SolidBrush(Color.FromArgb(240, 32, 33, 36)))
                     g.FillPath(b, path);
                 for (int i = 0; i < toolRects.Length; i++)
@@ -257,7 +284,7 @@ namespace ImageShot
                     Rectangle r = toolRects[i];
                     Color fill = i == hoverTool ? (i == 4 ? Color.FromArgb(196, 43, 28) : accent)
                                : i == 0 ? Color.FromArgb(0, 84, 153) : Color.FromArgb(62, 63, 67);
-                    using (GraphicsPath bp = Rounded(r, 6))
+                    using (GraphicsPath bp = Rounded(r, S(6)))
                     using (SolidBrush b = new SolidBrush(fill))
                         g.FillPath(b, bp);
                     TextRenderer.DrawText(g, ToolText[i], bold, r, Color.White,
@@ -617,7 +644,7 @@ namespace ImageShot
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) { StopLive(); tick.Dispose(); bright.Dispose(); dim.Dispose(); font.Dispose(); bold.Dispose(); }
+            if (disposing) { StopLive(); tick.Dispose(); bright.Dispose(); dim.Dispose(); font.Dispose(); bold.Dispose(); labelFont.Dispose(); }
             base.Dispose(disposing);
         }
     }
