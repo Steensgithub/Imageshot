@@ -36,9 +36,9 @@ jobs:
       - name: Pak installationsprogram, bærbar zip og udvidelse
         shell: pwsh
         run: |
-          [xml]$p = Get-Content windows/src/ImageShot/ImageShot.csproj
+          $ver = (Select-Xml -Path windows/src/ImageShot/ImageShot.csproj -XPath '//Version').Node.InnerText
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          pwsh build/package.ps1 -Version $p.Project.PropertyGroup[0].Version *>&1 | Tee-Object -FilePath artifacts/package.log
+          pwsh build/package.ps1 -Version $ver *>&1 | Tee-Object -FilePath artifacts/package.log
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path artifacts/release/*.exe)) { exit 1 }
 
       - name: Del byggede filer (gren ci-build)
