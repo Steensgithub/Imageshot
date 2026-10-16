@@ -160,7 +160,22 @@ namespace ImageShot
                 SettingsForm sf = new SettingsForm(app, true);
                 sf.Show(); Application.DoEvents(); sf.Close();
                 Toast.ShowText("selvtest", false); Application.DoEvents(); Toast.CloseCurrent();
-                return "udklipsholder, indstillinger, besked";
+                AboutForm af = new AboutForm(app);
+                af.Show(); Application.DoEvents(); af.Close();
+                return "udklipsholder, indstillinger, besked, om";
+            });
+
+            Check("Tastaturhook kan installeres og fjernes", delegate
+            {
+                using (Control c = new Control())
+                {
+                    c.CreateControl();
+                    KeyboardHook kh = new KeyboardHook(c, delegate (int m) { });
+                    bool ok = kh.Start();
+                    kh.Dispose();
+                    if (!ok) throw new Exception("SetWindowsHookEx fejlede");
+                    return "ok";
+                }
             });
 
             if (frozen != null) frozen.Dispose();

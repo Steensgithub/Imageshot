@@ -52,6 +52,10 @@ namespace ImageShot
             tray.Visible = true;
 
             hk = new HotkeyWindow(this);
+            invoker = new Control();
+            invoker.CreateControl(); // håndtag på UI-tråden, så tastaturhooken kan sende hertil
+            keyHook = new KeyboardHook(invoker, OnHotkey);
+            if (!keyHook.Start()) ErrorLog.Info("Tastaturhook ikke aktiv – PrtScn bruger RegisterHotKey");
             List<string> failed = RegisterHotkeys();
 
             if (St.FirstRun)
@@ -94,6 +98,9 @@ namespace ImageShot
                 catch (Exception ex) { Toast.ShowText(L.T("toast.logFailed", ex.Message), true); }
             };
             m.Items.Add(log);
+            ToolStripMenuItem about = new ToolStripMenuItem(L.T("menu.about"));
+            about.Click += delegate { using (AboutForm f = new AboutForm(this)) f.ShowDialog(); };
+            m.Items.Add(about);
             ToolStripMenuItem settings = new ToolStripMenuItem(L.T("menu.settings"));
             settings.Click += delegate { OpenSettings(false); };
             m.Items.Add(settings);
@@ -115,9 +122,13 @@ namespace ImageShot
             }
         }
 
+        KeyboardHook keyHook;
+        Control invoker;
+
         public void UnregisterHotkeys()
         {
             for (int id = 1; id <= 4; id++) Native.UnregisterHotKey(hk.Handle, id);
+            if (keyHook != null) keyHook.SetHotkeys(new Dictionary<Keys, int>());
         }
 
         // Returnerer navnene på de genveje, der ikke kunne registreres.
@@ -125,14 +136,18 @@ namespace ImageShot
         {
             UnregisterHotkeys();
             List<string> failed = new List<string>();
+            Dictionary<Keys, int> hooked = new Dictionary<Keys, int>();
             for (int i = 0; i < Modes.Length; i++)
             {
                 Keys k = St.Hotkey(Modes[i]);
                 Keys key = k & Keys.KeyCode;
                 if (key == Keys.None) continue;
+                // PrtScn-genveje fanges af tastaturhooken (virker også, når Windows 11 bruger PrtScn til Skærmklip).
+                if (key == Keys.PrintScreen && keyHook != null && keyHook.Active) { hooked[k] = i + 1; continue; }
                 if (!Native.RegisterHotKey(hk.Handle, i + 1, Hk.Mods(k), (uint)key))
                     failed.Add(Hk.ToText(k) + " (" + ModeNames[i].ToLower() + ")");
             }
+            if (keyHook != null) keyHook.SetHotkeys(hooked);
             UpdateMenuShortcuts();
             return failed;
         }
@@ -322,6 +337,8 @@ namespace ImageShot
         public void Dispose()
         {
             if (hk != null) { UnregisterHotkeys(); hk.Dispose(); }
+            if (keyHook != null) keyHook.Dispose();
+            if (invoker != null) invoker.Dispose();
             if (tray != null) { tray.Visible = false; tray.Dispose(); }
         }
     }
