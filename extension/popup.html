@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" data-i18n-doc="extName">
+<head>
+<meta charset="utf-8">
+<title>ImageShot</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body class="popup">
+  <header class="brand">
+    <img src="icons/icon48.png" alt="" width="34" height="34">
+    <h1>ImageShot</h1>
+  </header>
+
+  <section class="card captures">
+    <button class="cap" data-mode="visible"><span class="ico">▭</span><span data-i18n="modeVisible">Visible area</span></button>
+    <button class="cap" data-mode="region"><span class="ico">⬚</span><span data-i18n="modeRegion">Select area</span></button>
+    <button class="cap" data-mode="full"><span class="ico">▯</span><span data-i18n="modeFull">Full page</span></button>
+    <button class="cap" data-mode="tabs"><span class="ico">❐</span><span data-i18n="modeTabs">All tabs</span></button>
+  </section>
+  <p class="warn" id="permNote" data-i18n="permDenied" hidden></p>
+
+  <section class="card">
+    <div class="row">
+      <label for="resolution" class="title" data-i18n="resolution">Resolution</label>
+      <span id="resLabel" class="accent"></span>
+    </div>
+    <input type="range" id="resolution" min="0" max="100" step="1">
+    <div class="ends"><span data-i18n="qSmallest">Smallest file</span><span data-i18n="qMax">Highest resolution</span></div>
+    <p id="resDetail" class="muted"></p>
+    <label for="format" class="title small" data-i18n="fileFormat">File format</label>
+    <select id="format">
+      <option value="webp" data-i18n="fmtWebp">WebP</option>
+      <option value="png" data-i18n="fmtPng">PNG</option>
+      <option value="jpeg" data-i18n="fmtJpeg">JPEG</option>
+    </select>
+  </section>
+
+  <section class="card">
+    <label for="afterCapture" class="title" data-i18n="afterCapture">After capture</label>
+    <select id="afterCapture">
+      <option value="clipboard" data-i18n="acClipboard"></option>
+      <option value="copy" data-i18n="acCopy"></option>
+      <option value="save" data-i18n="acSave"></option>
+    </select>
+    <label class="check">
+      <input type="checkbox" id="autoClose">
+      <span data-i18n="autoClose"></span>
+    </label>
+  </section>
+
+  <section class="card">
+    <label for="allTabsScope" class="title" data-i18n="allTabsScope"></label>
+    <select id="allTabsScope">
+      <option value="window" data-i18n="scopeWindow"></option>
+      <option value="all" data-i18n="scopeAll"></option>
+    </select>
+  </section>
+
+  <section class="card">
+    <label for="folder" class="title" data-i18n="folder"></label>
+    <input type="text" id="folder" placeholder="ImageShot" spellcheck="false">
+  </section>
+
+  <p class="tip" data-i18n="tip" data-i18n-bold="ImageShot"></p>
+
+  <script src="settings.js"></script>
+  <script src="i18n.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

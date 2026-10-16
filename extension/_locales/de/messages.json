@@ -1,0 +1,372 @@
+{
+  "locale": {
+    "message": "de",
+    "description": "Locale code of this message bundle (used for <html lang> and number formatting). Do not translate."
+  },
+  "extName": {
+    "message": "ImageShot",
+    "description": "Extension name (brand, not translated)."
+  },
+  "extDescription": {
+    "message": "Screenshots vom sichtbaren Bereich, einem ausgewählten Bereich, der ganzen Seite oder allen Tabs – kopieren oder als Datei speichern.",
+    "description": "Store/extension description."
+  },
+  "cmdVisible": {
+    "message": "Sichtbaren Bereich aufnehmen",
+    "description": "Keyboard shortcut description."
+  },
+  "cmdRegion": {
+    "message": "Ausgewählten Bereich aufnehmen",
+    "description": "Keyboard shortcut description."
+  },
+  "menuRoot": {
+    "message": "ImageShot",
+    "description": "Context menu root item."
+  },
+  "modeVisible": {
+    "message": "Sichtbarer Bereich",
+    "description": "Capture mode."
+  },
+  "modeRegion": {
+    "message": "Bereich auswählen",
+    "description": "Capture mode."
+  },
+  "modeFull": {
+    "message": "Ganze Seite",
+    "description": "Capture mode."
+  },
+  "modeTabs": {
+    "message": "Alle Tabs",
+    "description": "Capture mode."
+  },
+  "qSmallest": {
+    "message": "Kleinste Datei",
+    "description": "Resolution slider label."
+  },
+  "qSmall": {
+    "message": "Klein",
+    "description": "Resolution slider label."
+  },
+  "qBalanced": {
+    "message": "Ausgewogen",
+    "description": "Resolution slider label."
+  },
+  "qHigh": {
+    "message": "Hoch",
+    "description": "Resolution slider label."
+  },
+  "qMax": {
+    "message": "Höchste Auflösung",
+    "description": "Resolution slider label."
+  },
+  "qLossless": {
+    "message": "verlustfrei",
+    "description": "Quality detail for PNG."
+  },
+  "qQuality": {
+    "message": "Qualität $value$",
+    "description": "Quality detail, e.g. \"quality 85\".",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "qDetail": {
+    "message": "$format$ · $percent$ % der Bildschirmauflösung · $quality$",
+    "description": "Slider detail line: format · percent of screen resolution · quality.",
+    "placeholders": {
+      "format": {
+        "content": "$1"
+      },
+      "percent": {
+        "content": "$2"
+      },
+      "quality": {
+        "content": "$3"
+      }
+    }
+  },
+  "resolution": {
+    "message": "Auflösung",
+    "description": "Settings heading."
+  },
+  "fileFormat": {
+    "message": "Dateiformat",
+    "description": "Settings heading."
+  },
+  "fmtWebp": {
+    "message": "WebP – kleine Dateien",
+    "description": "Format option."
+  },
+  "fmtPng": {
+    "message": "PNG – verlustfrei",
+    "description": "Format option."
+  },
+  "fmtJpeg": {
+    "message": "JPEG – weit verbreitet",
+    "description": "Format option."
+  },
+  "afterCapture": {
+    "message": "Nach der Aufnahme",
+    "description": "Settings heading."
+  },
+  "acClipboard": {
+    "message": "Zwischenablage anzeigen – kopieren oder speichern",
+    "description": "After-capture option."
+  },
+  "acCopy": {
+    "message": "Direkt in die Zwischenablage kopieren",
+    "description": "After-capture option."
+  },
+  "acSave": {
+    "message": "Direkt als Datei speichern",
+    "description": "After-capture option."
+  },
+  "autoClose": {
+    "message": "Zwischenablage automatisch schließen, sobald das Bild kopiert oder gespeichert wurde",
+    "description": "Checkbox."
+  },
+  "allTabsScope": {
+    "message": "„Alle Tabs“ umfasst",
+    "description": "Settings heading."
+  },
+  "scopeWindow": {
+    "message": "Tabs im aktuellen Fenster",
+    "description": "Scope option."
+  },
+  "scopeAll": {
+    "message": "Tabs in allen Fenstern",
+    "description": "Scope option."
+  },
+  "folder": {
+    "message": "Ordner in „Downloads“",
+    "description": "Settings heading."
+  },
+  "tip": {
+    "message": "Tipp: Klicken Sie mit der rechten Maustaste auf eine Seite und wählen Sie im Menü $name$.",
+    "description": "Popup tip; $name$ is the bold menu name.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "permTitle": {
+    "message": "Zugriff auf alle Tabs erlauben",
+    "description": "Permission window title."
+  },
+  "permBody": {
+    "message": "Für „Alle Tabs“ benötigt ImageShot die Berechtigung, die Seiten in Ihren geöffneten Tabs zu lesen. Sie wird nur für die Screenshots verwendet und kann jederzeit unter chrome://extensions entfernt werden.",
+    "description": "Permission explanation."
+  },
+  "permGrant": {
+    "message": "Erlauben und aufnehmen",
+    "description": "Button."
+  },
+  "permDenied": {
+    "message": "Der Zugriff wurde nicht erlaubt, daher wurden keine Tabs aufgenommen.",
+    "description": "Shown when the permission was refused."
+  },
+  "btnCancel": {
+    "message": "Abbrechen",
+    "description": "Button."
+  },
+  "clipTitle": {
+    "message": "Zwischenablage – ImageShot",
+    "description": "Clipboard window title."
+  },
+  "clipHeading": {
+    "message": "Zwischenablage",
+    "description": "Clipboard window heading."
+  },
+  "btnCopy": {
+    "message": "Kopieren",
+    "description": "Button."
+  },
+  "btnCrop": {
+    "message": "Zuschneiden",
+    "description": "Button / crop editor heading."
+  },
+  "btnUndoCrop": {
+    "message": "Zuschnitt rückgängig",
+    "description": "Button."
+  },
+  "btnSaveFile": {
+    "message": "Als Datei speichern",
+    "description": "Button."
+  },
+  "btnSave": {
+    "message": "Speichern",
+    "description": "Button (per image)."
+  },
+  "btnSaveAll": {
+    "message": "Alle speichern ($count$)",
+    "description": "Button; count of images.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "btnClose": {
+    "message": "Schließen",
+    "description": "Button."
+  },
+  "savedIn": {
+    "message": "Wird in Downloads/$folder$ gespeichert",
+    "description": "Footer; folder path.",
+    "placeholders": {
+      "folder": {
+        "content": "$1"
+      }
+    }
+  },
+  "savedInRoot": {
+    "message": "Wird in Downloads gespeichert",
+    "description": "Footer without subfolder."
+  },
+  "captureGone": {
+    "message": "Das Bild ist nicht mehr verfügbar. Erstellen Sie einen neuen Screenshot.",
+    "description": "Clipboard empty state."
+  },
+  "tabsFailed": {
+    "message": "$count$ Tab(s) konnten nicht aufgenommen werden (z. B. browsereigene Seiten oder minimierte Fenster).",
+    "description": "Warning; number of tabs.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageN": {
+    "message": "Bild $n$",
+    "description": "Fallback image title.",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "cropped": {
+    "message": "zugeschnitten",
+    "description": "Image info suffix."
+  },
+  "toastCopied": {
+    "message": "In die Zwischenablage kopiert",
+    "description": "Toast."
+  },
+  "toastCopyFail": {
+    "message": "Kopieren fehlgeschlagen – klicken Sie auf „Kopieren“",
+    "description": "Toast."
+  },
+  "toastClickCopy": {
+    "message": "Klicken Sie auf „Kopieren“, um das Bild zu kopieren",
+    "description": "Toast."
+  },
+  "toastSaved": {
+    "message": "In Downloads gespeichert",
+    "description": "Toast."
+  },
+  "toastSavedN": {
+    "message": "$count$ Bilder gespeichert",
+    "description": "Toast; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastSaveFail": {
+    "message": "Speichern fehlgeschlagen: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastCropped": {
+    "message": "Zugeschnitten",
+    "description": "Toast."
+  },
+  "toastCropFail": {
+    "message": "Zuschneiden fehlgeschlagen: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastUndone": {
+    "message": "Zuschnitt rückgängig gemacht",
+    "description": "Toast."
+  },
+  "encodeFail": {
+    "message": "das Bild konnte nicht kodiert werden",
+    "description": "Error detail."
+  },
+  "cropCancel": {
+    "message": "Abbrechen (Esc)",
+    "description": "Crop editor button."
+  },
+  "cropApply": {
+    "message": "Anwenden (Enter)",
+    "description": "Crop editor button."
+  },
+  "cropHint": {
+    "message": "Ziehen Sie einen Rahmen um den Bereich, den Sie behalten möchten. Kanten und Ecken lassen sich danach anpassen.",
+    "description": "Crop editor hint."
+  },
+  "cropSize": {
+    "message": "$width$ × $height$ px · Enter übernimmt · Esc bricht ab",
+    "description": "Crop editor info; width and height in px.",
+    "placeholders": {
+      "width": {
+        "content": "$1"
+      },
+      "height": {
+        "content": "$2"
+      }
+    }
+  },
+  "regionHint": {
+    "message": "Ziehen zum Auswählen · Zum Scrollen an den oberen oder unteren Rand fahren · Esc bricht ab",
+    "description": "Overlay hint while selecting an area."
+  },
+  "errProtected": {
+    "message": "Diese Seite ist vom Browser geschützt und kann nicht aufgenommen werden.",
+    "description": "Badge tooltip error."
+  },
+  "errFailed": {
+    "message": "Der Screenshot ist fehlgeschlagen: $error$",
+    "description": "Badge tooltip error; technical detail.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "errNoTabs": {
+    "message": "Es konnte kein Tab aufgenommen werden.",
+    "description": "Badge tooltip error."
+  },
+  "errTabsSome": {
+    "message": "$count$ Tab(s) konnten nicht aufgenommen werden.",
+    "description": "Badge tooltip error; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errTabSwitched": {
+    "message": "der Tab wurde während der Aufnahme gewechselt – bitte erneut versuchen",
+    "description": "Error detail."
+  },
+  "unknownTab": {
+    "message": "Unbekannter Tab",
+    "description": "Fallback tab name."
+  }
+}

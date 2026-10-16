@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" data-i18n-doc="clipTitle">
+<head>
+<meta charset="utf-8">
+<title>ImageShot</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body class="clip">
+  <header class="clip-head">
+    <div class="brand">
+      <img src="icons/icon48.png" alt="" width="34" height="34">
+      <h1 data-i18n="clipHeading"></h1>
+    </div>
+    <button class="btn primary" id="copyMain" data-i18n="btnCopy"></button>
+    <button class="btn" id="cropMain" data-i18n="btnCrop"></button>
+    <button class="btn" id="undoMain" hidden title="Ctrl+Z" data-i18n="btnUndoCrop"></button>
+    <button class="btn" id="saveMain" data-i18n="btnSaveFile"></button>
+    <button class="btn" id="closeBtn" data-i18n="btnClose"></button>
+  </header>
+
+  <p class="warn" id="warn" hidden></p>
+  <main class="shots" id="shots"></main>
+
+  <footer class="clip-foot">
+    <label class="check">
+      <input type="checkbox" id="autoClose">
+      <span data-i18n="autoClose"></span>
+    </label>
+    <span class="muted" id="where"></span>
+  </footer>
+
+  <div class="crop" id="crop" hidden>
+    <div class="crop-bar">
+      <b data-i18n="btnCrop"></b>
+      <span class="crop-info" id="cropInfo" data-i18n="cropHint"></span>
+      <button class="btn" id="cropCancel" data-i18n="cropCancel"></button>
+      <button class="btn primary" id="cropApply" data-i18n="cropApply"></button>
+    </div>
+    <div class="crop-stage" id="cropStage">
+      <div class="crop-canvas" id="cropCanvas">
+        <img id="cropImg" alt="" draggable="false">
+        <div class="crop-sel" id="cropSel" hidden>
+          <i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i>
+          <i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="settings.js"></script>
+  <script src="store.js"></script>
+  <script src="i18n.js"></script>
+  <script src="clipboard.js"></script>
+</body>
+</html>

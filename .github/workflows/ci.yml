@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows-program (bygning, tests, selvtest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Byg
+        run: dotnet build windows/src/ImageShot/ImageShot.csproj -c Release -warnaserror:CS0108,CS0114
+
+      - name: Enhedstests
+        run: dotnet test windows/tests/ImageShot.Tests/ImageShot.Tests.csproj -c Release --logger "console;verbosity=normal" --logger "trx;LogFileName=tests.trx" --results-directory artifacts/tests
+
+      - name: Selvtest i det rigtige program
+        shell: pwsh
+        run: |
+          $exe = "windows/src/ImageShot/bin/Release/net48/ImageShot.exe"
+          $p = Start-Process -FilePath $exe -ArgumentList '--selftest', "$PWD/artifacts/selftest" -PassThru -Wait
+          Get-Content artifacts/selftest/report.txt -Encoding utf8
+          if ($p.ExitCode -ne 0) { Write-Error "Selvtesten fejlede ($($p.ExitCode))"; exit 1 }
+
+      - name: Fejllog fra selvtesten
+        if: always()
+        shell: pwsh
+        run: |
+          $d = Join-Path $env:APPDATA "ImageShot\logs"
+          if (Test-Path $d) { Copy-Item $d artifacts/logs -Recurse; Get-ChildItem $d | ForEach-Object { Get-Content $_.FullName -Encoding utf8 } }
+
+      - name: Gem resultater
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-${{ github.sha }}
+          path: |
+            artifacts/
+            windows/src/ImageShot/bin/Release/net48/
+
+  extension:
+    name: Browserudvidelse (Chromium-tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Installér Playwright og Xvfb
+        working-directory: extension/tests
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          sudo apt-get install -y xvfb libxtst6
+      - name: Kør tests
+        working-directory: extension/tests
+        env:
+          TEST_OUT: ${{ github.workspace }}/extension/tests/out
+        run: bash ./run-all.sh
+      - name: Gem resultater
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-${{ github.sha }}
+          path: extension/tests/out/
+          if-no-files-found: ignore

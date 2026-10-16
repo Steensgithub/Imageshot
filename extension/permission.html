@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-i18n-doc="permTitle">
+<head>
+<meta charset="utf-8">
+<title>ImageShot</title>
+<link rel="stylesheet" href="ui.css">
+</head>
+<body class="perm">
+  <header class="brand">
+    <img src="icons/icon48.png" alt="" width="34" height="34">
+    <h1 data-i18n="permTitle"></h1>
+  </header>
+  <section class="card">
+    <p data-i18n="permBody"></p>
+    <p class="warn" id="denied" data-i18n="permDenied" hidden></p>
+    <div class="actions">
+      <button class="btn" id="cancel" data-i18n="btnCancel"></button>
+      <button class="btn primary" id="grant" data-i18n="permGrant"></button>
+    </div>
+  </section>
+  <script src="settings.js"></script>
+  <script src="i18n.js"></script>
+  <script src="permission.js"></script>
+</body>
+</html>

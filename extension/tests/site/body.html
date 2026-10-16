@@ -1,0 +1,12 @@
+<!doctype html><html style="overflow:hidden;height:100%"><head><meta charset="utf-8"><style>
+body{margin:0;height:100%;overflow:auto;font:16px sans-serif;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.row{height:70px;border-bottom:1px solid #999;display:flex;align-items:center;padding-left:10px;scroll-snap-align:start}
+table{border-collapse:collapse} td,th{padding:6px 10px;border:1px solid #ccc;white-space:nowrap}
+th.tk,td.tk{position:sticky;left:0;background:#ffd;font-weight:bold}
+.chat{position:fixed;right:20px;bottom:20px;width:120px;height:60px;background:#e33;color:#fff;border-radius:30px;display:flex;align-items:center;justify-content:center}
+</style></head><body>
+<div class="chat">CHAT</div>
+<table><thead><tr><th class="tk">Ticker</th><th>Pris</th><th>Volumen</th></tr></thead><tbody id="b"></tbody></table>
+<script>let h='';for(let i=1;i<=50;i++)h+=`<tr><td class="tk">TCK${i}</td><td>${(100+i).toFixed(2)}</td><td style="background:hsl(${i*7},60%,85%)">rk ${i}</td></tr>`;document.getElementById('b').innerHTML=h;
+for(let i=1;i<=25;i++)document.write(`<div class="row" style="background:hsl(${i*14},60%,80%)">Snap-række ${i}</div>`)</script>
+</body></html>

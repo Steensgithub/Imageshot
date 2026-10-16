@@ -1,0 +1,372 @@
+{
+  "locale": {
+    "message": "da",
+    "description": "Locale code of this message bundle (used for <html lang> and number formatting). Do not translate."
+  },
+  "extName": {
+    "message": "ImageShot",
+    "description": "Extension name (brand, not translated)."
+  },
+  "extDescription": {
+    "message": "Tag skærmbilleder af det synlige område, et markeret område, hele siden eller alle faner – kopiér eller gem som fil.",
+    "description": "Store/extension description."
+  },
+  "cmdVisible": {
+    "message": "Skærmbillede af synligt område",
+    "description": "Keyboard shortcut description."
+  },
+  "cmdRegion": {
+    "message": "Skærmbillede af markeret område",
+    "description": "Keyboard shortcut description."
+  },
+  "menuRoot": {
+    "message": "ImageShot",
+    "description": "Context menu root item."
+  },
+  "modeVisible": {
+    "message": "Synligt område",
+    "description": "Capture mode."
+  },
+  "modeRegion": {
+    "message": "Markér område",
+    "description": "Capture mode."
+  },
+  "modeFull": {
+    "message": "Hele siden",
+    "description": "Capture mode."
+  },
+  "modeTabs": {
+    "message": "Alle faner",
+    "description": "Capture mode."
+  },
+  "qSmallest": {
+    "message": "Mindste fil",
+    "description": "Resolution slider label."
+  },
+  "qSmall": {
+    "message": "Lille",
+    "description": "Resolution slider label."
+  },
+  "qBalanced": {
+    "message": "Balanceret",
+    "description": "Resolution slider label."
+  },
+  "qHigh": {
+    "message": "Høj",
+    "description": "Resolution slider label."
+  },
+  "qMax": {
+    "message": "Højeste opløsning",
+    "description": "Resolution slider label."
+  },
+  "qLossless": {
+    "message": "tabsfri",
+    "description": "Quality detail for PNG."
+  },
+  "qQuality": {
+    "message": "kvalitet $value$",
+    "description": "Quality detail, e.g. \"quality 85\".",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "qDetail": {
+    "message": "$format$ · $percent$ % af skærmens opløsning · $quality$",
+    "description": "Slider detail line: format · percent of screen resolution · quality.",
+    "placeholders": {
+      "format": {
+        "content": "$1"
+      },
+      "percent": {
+        "content": "$2"
+      },
+      "quality": {
+        "content": "$3"
+      }
+    }
+  },
+  "resolution": {
+    "message": "Opløsning",
+    "description": "Settings heading."
+  },
+  "fileFormat": {
+    "message": "Filformat",
+    "description": "Settings heading."
+  },
+  "fmtWebp": {
+    "message": "WebP – små filer",
+    "description": "Format option."
+  },
+  "fmtPng": {
+    "message": "PNG – tabsfri",
+    "description": "Format option."
+  },
+  "fmtJpeg": {
+    "message": "JPEG – bredt understøttet",
+    "description": "Format option."
+  },
+  "afterCapture": {
+    "message": "Efter optagelse",
+    "description": "Settings heading."
+  },
+  "acClipboard": {
+    "message": "Vis udklipsholder – vælg kopiér eller gem",
+    "description": "After-capture option."
+  },
+  "acCopy": {
+    "message": "Kopiér direkte til udklipsholderen",
+    "description": "After-capture option."
+  },
+  "acSave": {
+    "message": "Gem direkte som fil",
+    "description": "After-capture option."
+  },
+  "autoClose": {
+    "message": "Luk udklipsholderen automatisk, når billedet er kopieret eller gemt",
+    "description": "Checkbox."
+  },
+  "allTabsScope": {
+    "message": "\"Alle faner\" omfatter",
+    "description": "Settings heading."
+  },
+  "scopeWindow": {
+    "message": "Fanerne i det aktuelle vindue",
+    "description": "Scope option."
+  },
+  "scopeAll": {
+    "message": "Faner i alle vinduer",
+    "description": "Scope option."
+  },
+  "folder": {
+    "message": "Mappe i Overførsler",
+    "description": "Settings heading."
+  },
+  "tip": {
+    "message": "Tip: Højreklik på en side og vælg $name$ i menuen.",
+    "description": "Popup tip; $name$ is the bold menu name.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "permTitle": {
+    "message": "Giv adgang til alle faner",
+    "description": "Permission window title."
+  },
+  "permBody": {
+    "message": "For at kunne tage \"Alle faner\" skal ImageShot have lov til at læse siderne i dine åbne faner. Tilladelsen bruges kun til skærmbillederne og kan fjernes når som helst under chrome://extensions.",
+    "description": "Permission explanation."
+  },
+  "permGrant": {
+    "message": "Tillad og tag billeder",
+    "description": "Button."
+  },
+  "permDenied": {
+    "message": "Der blev ikke givet adgang, så ingen faner blev fotograferet.",
+    "description": "Shown when the permission was refused."
+  },
+  "btnCancel": {
+    "message": "Annullér",
+    "description": "Button."
+  },
+  "clipTitle": {
+    "message": "Udklipsholder – ImageShot",
+    "description": "Clipboard window title."
+  },
+  "clipHeading": {
+    "message": "Udklipsholder",
+    "description": "Clipboard window heading."
+  },
+  "btnCopy": {
+    "message": "Kopiér",
+    "description": "Button."
+  },
+  "btnCrop": {
+    "message": "Tilskær",
+    "description": "Button / crop editor heading."
+  },
+  "btnUndoCrop": {
+    "message": "Fortryd tilskæring",
+    "description": "Button."
+  },
+  "btnSaveFile": {
+    "message": "Gem som fil",
+    "description": "Button."
+  },
+  "btnSave": {
+    "message": "Gem",
+    "description": "Button (per image)."
+  },
+  "btnSaveAll": {
+    "message": "Gem alle ($count$)",
+    "description": "Button; count of images.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "btnClose": {
+    "message": "Luk",
+    "description": "Button."
+  },
+  "savedIn": {
+    "message": "Gemmes i Overførsler/$folder$",
+    "description": "Footer; folder path.",
+    "placeholders": {
+      "folder": {
+        "content": "$1"
+      }
+    }
+  },
+  "savedInRoot": {
+    "message": "Gemmes i Overførsler",
+    "description": "Footer without subfolder."
+  },
+  "captureGone": {
+    "message": "Billedet er ikke længere tilgængeligt. Tag et nyt skærmbillede.",
+    "description": "Clipboard empty state."
+  },
+  "tabsFailed": {
+    "message": "$count$ fane(r) kunne ikke fotograferes (f.eks. browserens egne sider eller minimerede vinduer).",
+    "description": "Warning; number of tabs.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageN": {
+    "message": "Billede $n$",
+    "description": "Fallback image title.",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "cropped": {
+    "message": "tilskåret",
+    "description": "Image info suffix."
+  },
+  "toastCopied": {
+    "message": "Kopieret til udklipsholderen",
+    "description": "Toast."
+  },
+  "toastCopyFail": {
+    "message": "Kunne ikke kopiere – klik på Kopiér",
+    "description": "Toast."
+  },
+  "toastClickCopy": {
+    "message": "Klik på Kopiér for at kopiere billedet",
+    "description": "Toast."
+  },
+  "toastSaved": {
+    "message": "Gemt i Overførsler",
+    "description": "Toast."
+  },
+  "toastSavedN": {
+    "message": "$count$ billeder gemt",
+    "description": "Toast; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastSaveFail": {
+    "message": "Kunne ikke gemme: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastCropped": {
+    "message": "Tilskåret",
+    "description": "Toast."
+  },
+  "toastCropFail": {
+    "message": "Kunne ikke tilskære: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastUndone": {
+    "message": "Tilskæring fortrudt",
+    "description": "Toast."
+  },
+  "encodeFail": {
+    "message": "billedet kunne ikke kodes",
+    "description": "Error detail."
+  },
+  "cropCancel": {
+    "message": "Annullér (Esc)",
+    "description": "Crop editor button."
+  },
+  "cropApply": {
+    "message": "Anvend (Enter)",
+    "description": "Crop editor button."
+  },
+  "cropHint": {
+    "message": "Træk en ramme om det, du vil beholde. Kanter og hjørner kan justeres bagefter.",
+    "description": "Crop editor hint."
+  },
+  "cropSize": {
+    "message": "$width$ × $height$ px · Enter anvender · Esc annullerer",
+    "description": "Crop editor info; width and height in px.",
+    "placeholders": {
+      "width": {
+        "content": "$1"
+      },
+      "height": {
+        "content": "$2"
+      }
+    }
+  },
+  "regionHint": {
+    "message": "Træk for at markere · Skub til øverste eller nederste kant for at scrolle · Esc annullerer",
+    "description": "Overlay hint while selecting an area."
+  },
+  "errProtected": {
+    "message": "Denne side er beskyttet af browseren og kan ikke fotograferes.",
+    "description": "Badge tooltip error."
+  },
+  "errFailed": {
+    "message": "Skærmbilledet mislykkedes: $error$",
+    "description": "Badge tooltip error; technical detail.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "errNoTabs": {
+    "message": "Ingen faner kunne fotograferes.",
+    "description": "Badge tooltip error."
+  },
+  "errTabsSome": {
+    "message": "$count$ fane(r) kunne ikke fotograferes.",
+    "description": "Badge tooltip error; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errTabSwitched": {
+    "message": "fanen blev skiftet under optagelsen – prøv igen",
+    "description": "Error detail."
+  },
+  "unknownTab": {
+    "message": "Ukendt fane",
+    "description": "Fallback tab name."
+  }
+}

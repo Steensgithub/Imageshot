@@ -1,0 +1,372 @@
+{
+  "locale": {
+    "message": "es",
+    "description": "Locale code of this message bundle (used for <html lang> and number formatting). Do not translate."
+  },
+  "extName": {
+    "message": "ImageShot",
+    "description": "Extension name (brand, not translated)."
+  },
+  "extDescription": {
+    "message": "Captura el área visible, un área seleccionada, la página completa o todas las pestañas: cópiala al portapapeles o guárdala como archivo.",
+    "description": "Store/extension description."
+  },
+  "cmdVisible": {
+    "message": "Capturar el área visible",
+    "description": "Keyboard shortcut description."
+  },
+  "cmdRegion": {
+    "message": "Capturar un área seleccionada",
+    "description": "Keyboard shortcut description."
+  },
+  "menuRoot": {
+    "message": "ImageShot",
+    "description": "Context menu root item."
+  },
+  "modeVisible": {
+    "message": "Área visible",
+    "description": "Capture mode."
+  },
+  "modeRegion": {
+    "message": "Seleccionar área",
+    "description": "Capture mode."
+  },
+  "modeFull": {
+    "message": "Página completa",
+    "description": "Capture mode."
+  },
+  "modeTabs": {
+    "message": "Todas las pestañas",
+    "description": "Capture mode."
+  },
+  "qSmallest": {
+    "message": "Archivo más pequeño",
+    "description": "Resolution slider label."
+  },
+  "qSmall": {
+    "message": "Pequeño",
+    "description": "Resolution slider label."
+  },
+  "qBalanced": {
+    "message": "Equilibrado",
+    "description": "Resolution slider label."
+  },
+  "qHigh": {
+    "message": "Alto",
+    "description": "Resolution slider label."
+  },
+  "qMax": {
+    "message": "Máxima resolución",
+    "description": "Resolution slider label."
+  },
+  "qLossless": {
+    "message": "sin pérdida",
+    "description": "Quality detail for PNG."
+  },
+  "qQuality": {
+    "message": "calidad $value$",
+    "description": "Quality detail, e.g. \"quality 85\".",
+    "placeholders": {
+      "value": {
+        "content": "$1"
+      }
+    }
+  },
+  "qDetail": {
+    "message": "$format$ · $percent$ % de la resolución de pantalla · $quality$",
+    "description": "Slider detail line: format · percent of screen resolution · quality.",
+    "placeholders": {
+      "format": {
+        "content": "$1"
+      },
+      "percent": {
+        "content": "$2"
+      },
+      "quality": {
+        "content": "$3"
+      }
+    }
+  },
+  "resolution": {
+    "message": "Resolución",
+    "description": "Settings heading."
+  },
+  "fileFormat": {
+    "message": "Formato de archivo",
+    "description": "Settings heading."
+  },
+  "fmtWebp": {
+    "message": "WebP: archivos pequeños",
+    "description": "Format option."
+  },
+  "fmtPng": {
+    "message": "PNG: sin pérdida",
+    "description": "Format option."
+  },
+  "fmtJpeg": {
+    "message": "JPEG: compatible con casi todo",
+    "description": "Format option."
+  },
+  "afterCapture": {
+    "message": "Después de capturar",
+    "description": "Settings heading."
+  },
+  "acClipboard": {
+    "message": "Mostrar el portapapeles: elegir copiar o guardar",
+    "description": "After-capture option."
+  },
+  "acCopy": {
+    "message": "Copiar directamente al portapapeles",
+    "description": "After-capture option."
+  },
+  "acSave": {
+    "message": "Guardar directamente como archivo",
+    "description": "After-capture option."
+  },
+  "autoClose": {
+    "message": "Cerrar el portapapeles automáticamente cuando la imagen se haya copiado o guardado",
+    "description": "Checkbox."
+  },
+  "allTabsScope": {
+    "message": "«Todas las pestañas» incluye",
+    "description": "Settings heading."
+  },
+  "scopeWindow": {
+    "message": "Las pestañas de la ventana actual",
+    "description": "Scope option."
+  },
+  "scopeAll": {
+    "message": "Las pestañas de todas las ventanas",
+    "description": "Scope option."
+  },
+  "folder": {
+    "message": "Carpeta en Descargas",
+    "description": "Settings heading."
+  },
+  "tip": {
+    "message": "Consejo: haz clic derecho en una página y elige $name$ en el menú.",
+    "description": "Popup tip; $name$ is the bold menu name.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "permTitle": {
+    "message": "Permitir el acceso a todas las pestañas",
+    "description": "Permission window title."
+  },
+  "permBody": {
+    "message": "Para capturar «Todas las pestañas», ImageShot necesita permiso para leer las páginas de tus pestañas abiertas. Solo se usa para hacer las capturas y puedes retirarlo en cualquier momento en chrome://extensions.",
+    "description": "Permission explanation."
+  },
+  "permGrant": {
+    "message": "Permitir y capturar",
+    "description": "Button."
+  },
+  "permDenied": {
+    "message": "No se concedió el acceso, así que no se capturó ninguna pestaña.",
+    "description": "Shown when the permission was refused."
+  },
+  "btnCancel": {
+    "message": "Cancelar",
+    "description": "Button."
+  },
+  "clipTitle": {
+    "message": "Portapapeles – ImageShot",
+    "description": "Clipboard window title."
+  },
+  "clipHeading": {
+    "message": "Portapapeles",
+    "description": "Clipboard window heading."
+  },
+  "btnCopy": {
+    "message": "Copiar",
+    "description": "Button."
+  },
+  "btnCrop": {
+    "message": "Recortar",
+    "description": "Button / crop editor heading."
+  },
+  "btnUndoCrop": {
+    "message": "Deshacer recorte",
+    "description": "Button."
+  },
+  "btnSaveFile": {
+    "message": "Guardar como archivo",
+    "description": "Button."
+  },
+  "btnSave": {
+    "message": "Guardar",
+    "description": "Button (per image)."
+  },
+  "btnSaveAll": {
+    "message": "Guardar todas ($count$)",
+    "description": "Button; count of images.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "btnClose": {
+    "message": "Cerrar",
+    "description": "Button."
+  },
+  "savedIn": {
+    "message": "Se guarda en Descargas/$folder$",
+    "description": "Footer; folder path.",
+    "placeholders": {
+      "folder": {
+        "content": "$1"
+      }
+    }
+  },
+  "savedInRoot": {
+    "message": "Se guarda en Descargas",
+    "description": "Footer without subfolder."
+  },
+  "captureGone": {
+    "message": "La imagen ya no está disponible. Haz una nueva captura de pantalla.",
+    "description": "Clipboard empty state."
+  },
+  "tabsFailed": {
+    "message": "No se pudieron capturar $count$ pestaña(s) (p. ej., páginas propias del navegador o ventanas minimizadas).",
+    "description": "Warning; number of tabs.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "imageN": {
+    "message": "Imagen $n$",
+    "description": "Fallback image title.",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "cropped": {
+    "message": "recortada",
+    "description": "Image info suffix."
+  },
+  "toastCopied": {
+    "message": "Copiada al portapapeles",
+    "description": "Toast."
+  },
+  "toastCopyFail": {
+    "message": "No se pudo copiar: haz clic en Copiar",
+    "description": "Toast."
+  },
+  "toastClickCopy": {
+    "message": "Haz clic en Copiar para copiar la imagen",
+    "description": "Toast."
+  },
+  "toastSaved": {
+    "message": "Guardada en Descargas",
+    "description": "Toast."
+  },
+  "toastSavedN": {
+    "message": "$count$ imágenes guardadas",
+    "description": "Toast; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastSaveFail": {
+    "message": "No se pudo guardar: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastCropped": {
+    "message": "Recortada",
+    "description": "Toast."
+  },
+  "toastCropFail": {
+    "message": "No se pudo recortar: $error$",
+    "description": "Toast; error text.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "toastUndone": {
+    "message": "Recorte deshecho",
+    "description": "Toast."
+  },
+  "encodeFail": {
+    "message": "no se pudo codificar la imagen",
+    "description": "Error detail."
+  },
+  "cropCancel": {
+    "message": "Cancelar (Esc)",
+    "description": "Crop editor button."
+  },
+  "cropApply": {
+    "message": "Aplicar (Enter)",
+    "description": "Crop editor button."
+  },
+  "cropHint": {
+    "message": "Arrastra un marco alrededor de lo que quieres conservar. Después puedes ajustar los bordes y las esquinas.",
+    "description": "Crop editor hint."
+  },
+  "cropSize": {
+    "message": "$width$ × $height$ px · Enter aplica · Esc cancela",
+    "description": "Crop editor info; width and height in px.",
+    "placeholders": {
+      "width": {
+        "content": "$1"
+      },
+      "height": {
+        "content": "$2"
+      }
+    }
+  },
+  "regionHint": {
+    "message": "Arrastra para seleccionar · Lleva el ratón al borde superior o inferior para desplazarte · Esc cancela",
+    "description": "Overlay hint while selecting an area."
+  },
+  "errProtected": {
+    "message": "El navegador protege esta página y no se puede capturar.",
+    "description": "Badge tooltip error."
+  },
+  "errFailed": {
+    "message": "La captura de pantalla ha fallado: $error$",
+    "description": "Badge tooltip error; technical detail.",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "errNoTabs": {
+    "message": "No se pudo capturar ninguna pestaña.",
+    "description": "Badge tooltip error."
+  },
+  "errTabsSome": {
+    "message": "No se pudieron capturar $count$ pestaña(s).",
+    "description": "Badge tooltip error; count.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errTabSwitched": {
+    "message": "se cambió de pestaña durante la captura; inténtalo de nuevo",
+    "description": "Error detail."
+  },
+  "unknownTab": {
+    "message": "Pestaña desconocida",
+    "description": "Fallback tab name."
+  }
+}

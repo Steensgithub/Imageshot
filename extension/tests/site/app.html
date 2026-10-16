@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;height:100%;overflow:hidden;font:16px sans-serif}
+.top{height:60px;background:#1b6b4f;color:#fff;display:flex;align-items:center;padding:0 16px;font-weight:bold}
+.wrap{display:flex;height:calc(100% - 100px)}
+.side{width:200px;background:#eee;padding:10px}
+.main{flex:1;overflow-y:auto;background:#fff}
+.main thead th{position:sticky;top:0;background:#ffd;padding:6px}
+.row{height:50px;border-bottom:1px solid #ccc;display:flex;align-items:center;padding-left:10px}
+.bottom{height:40px;background:#333;color:#fff;display:flex;align-items:center;padding-left:16px}
+</style></head><body>
+<div class="top">TOPLINJE (vises én gang)</div>
+<div class="wrap"><div class="side">Menu<br>Indbakke<br>Sendt</div>
+<div class="main"><table style="width:100%;border-collapse:collapse"><thead><tr><th>KLÆBENDE OVERSKRIFT</th></tr></thead><tbody id="b"></tbody></table></div></div>
+<div class="bottom">BUNDLINJE (vises én gang, nederst)</div>
+<script>let h='';for(let i=1;i<=60;i++)h+=`<tr><td><div class="row" style="background:hsl(${i*6},70%,85%)">Række ${i}</div></td></tr>`;document.getElementById('b').innerHTML=h;</script>
+</body></html>
