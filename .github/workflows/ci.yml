@@ -80,7 +80,19 @@ jobs:
         working-directory: extension/tests
         env:
           TEST_OUT: ${{ github.workspace }}/extension/tests/out
-        run: bash ./run-all.sh
+        run: |
+          mkdir -p out
+          set -o pipefail
+          bash ./run-all.sh 2>&1 | tee out/run-all.log
+      - name: Rapportér resultater som annoteringer
+        if: always()
+        working-directory: extension/tests
+        run: |
+          if [ -f out/run-all.log ]; then
+            msg=$(tail -n 200 out/run-all.log | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            if grep -qiE "FAIL|not ok|Error" out/run-all.log; then lvl=error; else lvl=notice; fi
+            echo "::$lvl title=Udvidelsestests::$msg"
+          fi
       - name: Gem resultater
         if: always()
         uses: actions/upload-artifact@v4

@@ -144,35 +144,46 @@ namespace ImageShot
         const byte NEW = 0, MOVE = 1, AMBIG = 2, STATIC = 3, CHANGED = 4;
 
         // Den sammenhængende del, der flytter sig med d (uden faste top/bundlinjer).
-        static bool Region(ulong[] cp, ulong[] cc, int d, out int t, out int b)
+        // Hver række afgøres ved flertal blandt de striber, der følger forskydningen, så et lille
+        // område med anden bevægelse (scrollbjælkens greb, en blinkende markør) ikke knækker rækken.
+        static bool Region(ulong[][] prev, ulong[][] cur, bool[] use, int d, out int t, out int b)
         {
-            int n = cc.Length;
+            int n = cur[0].Length;
             byte[] st = new byte[n];
             for (int i = 0; i < n; i++)
             {
                 int j = i + d;
-                if (j < 0 || j >= n) st[i] = NEW;
-                else if (cc[i] == cp[j]) st[i] = cc[i] == cp[i] ? AMBIG : MOVE;
-                else st[i] = cc[i] == cp[i] ? STATIC : CHANGED;
+                if (j < 0 || j >= n) { st[i] = NEW; continue; }
+                int good = 0, moves = 0, bad = 0, statics = 0;
+                for (int f = 0; f < cur.Length; f++)
+                {
+                    if (!use[f]) continue;
+                    bool shifted = cur[f][i] == prev[f][j], same = cur[f][i] == prev[f][i];
+                    if (shifted) { good++; if (!same) moves++; }
+                    else { bad++; if (same) statics++; }
+                }
+                if (good + bad == 0) { st[i] = AMBIG; continue; }
+                if (good >= 0.6 * (good + bad)) st[i] = moves > 0 ? MOVE : AMBIG;
+                else st[i] = statics * 2 >= bad ? STATIC : CHANGED;
             }
-            // Største blok af MOVE/AMBIG (små huller med ændringer tilladt, fx en blinkende markør).
+            // Største blok af MOVE/AMBIG (små huller med ændringer tilladt).
             int bestStart = -1, bestEnd = -1, bestMoves = 0;
-            int start = -1, moves = 0, gap = 0, lastGood = -1;
+            int start = -1, mv = 0, gap = 0, lastGood = -1;
             for (int i = 0; i <= n; i++)
             {
-                byte s = i < n ? st[i] : STATIC;
-                bool good = s == MOVE || s == AMBIG;
-                if (good)
+                byte sState = i < n ? st[i] : STATIC;
+                bool ok = sState == MOVE || sState == AMBIG;
+                if (ok)
                 {
-                    if (start < 0) { start = i; moves = 0; }
-                    if (s == MOVE) moves++;
+                    if (start < 0) { start = i; mv = 0; }
+                    if (sState == MOVE) mv++;
                     gap = 0;
                     lastGood = i;
                 }
                 else if (start >= 0)
                 {
-                    if (s == CHANGED && gap < 3 && i < n) { gap++; continue; }
-                    if (moves > bestMoves) { bestMoves = moves; bestStart = start; bestEnd = lastGood + 1; }
+                    if (sState == CHANGED && gap < 3 && i < n) { gap++; continue; }
+                    if (mv > bestMoves) { bestMoves = mv; bestStart = start; bestEnd = lastGood + 1; }
                     start = -1; gap = 0;
                 }
             }
@@ -273,7 +284,7 @@ namespace ImageShot
                 if (inf >= 6 && m >= 0.7 * inf) { agree[f] = true; anyAgree = true; }
             }
             int rt, rb;
-            if (!anyAgree || !Region(Combine(prev, agree), Combine(h, agree), dBest, out rt, out rb))
+            if (!anyAgree || !Region(prev, h, agree, dBest, out rt, out rb))
             {
                 if (++misses > 25) Lost = true;
                 return false;
@@ -353,18 +364,32 @@ namespace ImageShot
             }
             if (newTop != top || newBottom != bottom)
             {
-                Bitmap nb = new Bitmap(Width, newBottom - newTop, PixelFormat.Format32bppRgb);
+                Bitmap nb = NewWhite(Width, newBottom - newTop);
                 using (Graphics g = Graphics.FromImage(nb))
                 {
-                    g.Clear(Color.White);
                     g.CompositingMode = CompositingMode.SourceCopy;
-                    g.DrawImageUnscaled(canvas, 0, top - newTop);
+                    g.DrawImage(canvas, new Rectangle(0, top - newTop, Width, canvas.Height), new Rectangle(0, 0, Width, canvas.Height), GraphicsUnit.Pixel);
                 }
                 canvas.Dispose();
                 canvas = nb;
                 originY = newTop;
             }
             return true;
+        }
+
+        // Ny bitmap fyldt med hvid (direkte i hukommelsen – ens resultat overalt).
+        static Bitmap NewWhite(int w, int h)
+        {
+            Bitmap b = new Bitmap(w, h, PixelFormat.Format32bppRgb);
+            BitmapData d = b.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+            try
+            {
+                int[] row = new int[w];
+                for (int x = 0; x < w; x++) row[x] = -1; // 0xFFFFFFFF
+                for (int y = 0; y < h; y++) Marshal.Copy(row, 0, d.Scan0 + y * d.Stride, w);
+            }
+            finally { b.UnlockBits(d); }
+            return b;
         }
 
         // Udsnit af indholdsrækkerne [c0, c1).
@@ -374,10 +399,9 @@ namespace ImageShot
             c1 = Math.Min(c1, maxC);
             if (c1 - c0 > MaxHeight) c1 = c0 + MaxHeight;
             if (c1 <= c0) return null;
-            Bitmap b = new Bitmap(Width, c1 - c0, PixelFormat.Format32bppRgb);
+            Bitmap b = NewWhite(Width, c1 - c0);
             using (Graphics g = Graphics.FromImage(b))
             {
-                g.Clear(Color.White);
                 g.CompositingMode = CompositingMode.SourceCopy;
                 g.DrawImage(canvas, new Rectangle(0, 0, Width, c1 - c0), new Rectangle(0, c0 - originY, Width, c1 - c0), GraphicsUnit.Pixel);
             }
