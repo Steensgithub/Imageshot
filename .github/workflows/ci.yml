@@ -37,7 +37,9 @@ jobs:
         shell: pwsh
         run: |
           [xml]$p = Get-Content windows/src/ImageShot/ImageShot.csproj
-          pwsh build/package.ps1 -Version $p.Project.PropertyGroup[0].Version
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          pwsh build/package.ps1 -Version $p.Project.PropertyGroup[0].Version *>&1 | Tee-Object -FilePath artifacts/package.log
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path artifacts/release/*.exe)) { exit 1 }
 
       - name: Del byggede filer (gren ci-build)
         if: github.ref == 'refs/heads/main'
@@ -69,6 +71,7 @@ jobs:
           $failedTests = (Test-Path artifacts/tests.log) -and (Select-String -Path artifacts/tests.log -Pattern 'Failed!|Mislykkedes|error' -Quiet)
           Annotate ($(if ($failedTests) { 'error' } else { 'notice' })) 'Enhedstests' artifacts/tests.log
           Annotate 'notice' 'Selvtest' artifacts/selftest/report.txt
+          Annotate 'notice' 'Pakning' artifacts/package.log
           Get-ChildItem artifacts/logs -ErrorAction SilentlyContinue | ForEach-Object { Annotate 'notice' ('Log ' + $_.Name) $_.FullName }
 
       - name: Del skærmbilleder (gren ci-shots-windows)
@@ -118,7 +121,7 @@ jobs:
         run: |
           if [ -f out/run-all.log ]; then
             msg=$(tail -n 200 out/run-all.log | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
-            if grep -qiE "FAIL|not ok|Error" out/run-all.log; then lvl=error; else lvl=notice; fi
+            if grep -qE "^FAIL|^FAILED:" out/run-all.log; then lvl=error; else lvl=notice; fi
             echo "::$lvl title=Udvidelsestests::$msg"
           fi
       - name: Del skærmbilleder (gren ci-shots-extension)
