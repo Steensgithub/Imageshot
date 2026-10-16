@@ -41,6 +41,25 @@ jobs:
           pwsh build/package.ps1 -Version $ver *>&1 | Tee-Object -FilePath artifacts/package.log
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path artifacts/release/*.exe)) { exit 1 }
 
+      - name: Test installation og afinstallation
+        shell: pwsh
+        run: |
+          $setup = (Get-ChildItem artifacts/release/ImageShot-Setup-*.exe).FullName
+          $dir = Join-Path $env:LOCALAPPDATA 'Programs\ImageShot'
+          $p = Start-Process $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/TASKS=autostart', '/LOG=artifacts\install.log' -PassThru -Wait
+          if ($p.ExitCode -ne 0) { throw "Installation fejlede ($($p.ExitCode))" }
+          if (-not (Test-Path "$dir\ImageShot.exe")) { throw "ImageShot.exe blev ikke installeret" }
+          if (-not (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\ImageShot.lnk")) { throw "Genvej i Start mangler" }
+          $run = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name ImageShot -ErrorAction SilentlyContinue
+          if (-not $run) { throw "Autostart blev ikke sat" }
+          Get-Process ImageShot -ErrorAction SilentlyContinue | Stop-Process -Force
+          $p = Start-Process "$dir\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES' -PassThru -Wait
+          Start-Sleep 3
+          if (Test-Path "$dir\ImageShot.exe") { throw "Afinstallation efterlod ImageShot.exe" }
+          $run = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name ImageShot -ErrorAction SilentlyContinue
+          if ($run) { throw "Autostart blev ikke fjernet ved afinstallation" }
+          "Installation og afinstallation OK" | Tee-Object -FilePath artifacts/install-test.txt
+
       - name: Del byggede filer (gren ci-build)
         if: github.ref == 'refs/heads/main'
         shell: bash
@@ -72,6 +91,7 @@ jobs:
           Annotate ($(if ($failedTests) { 'error' } else { 'notice' })) 'Enhedstests' artifacts/tests.log
           Annotate 'notice' 'Selvtest' artifacts/selftest/report.txt
           Annotate 'notice' 'Pakning' artifacts/package.log
+          Annotate 'notice' 'Installationstest' artifacts/install-test.txt
           Get-ChildItem artifacts/logs -ErrorAction SilentlyContinue | ForEach-Object { Annotate 'notice' ('Log ' + $_.Name) $_.FullName }
 
       - name: Del skærmbilleder (gren ci-shots-windows)
