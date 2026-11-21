@@ -413,5 +413,14 @@
   },
   "drawn": {
     "message": "drawn on"
+  },
+  "look": {
+    "message": "Look"
+  },
+  "lookStandard": {
+    "message": "Standard (follows light/dark)"
+  },
+  "lookVivid": {
+    "message": "Vivid (warm and colorful)"
   }
 }

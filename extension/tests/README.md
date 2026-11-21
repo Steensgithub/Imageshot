@@ -12,6 +12,7 @@ with the unpacked extension loaded from the parent folder.
 | `esc.js` | Esc after edge auto-scroll cancels, restores the scroll position, styles and markers, and a new selection can start. |
 | `tabs.js` | *All tabs* with host access granted: every tab captured, titles readable without the `tabs` permission, original tab re-activated, and the pending-request hand-over used by the popup and the permission window. |
 | `locale.js` | Starts Chromium with `--lang=de`, then `da`, `es` and `en`. Checks the popup (German: "Sichtbarer Bereich", "Auflösung"), the clipboard window, the permission window and the context-menu titles. |
+| `look.js` | The *Look* setting: "Vivid" sets `data-theme="vivid"` on the popup, on pages already open and on pages opened later; the bundled font loads from the extension; text, glyph and field-border contrast; "Standard" restores light/dark. |
 
 ## Run
 

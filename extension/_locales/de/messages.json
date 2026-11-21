@@ -413,5 +413,14 @@
   },
   "drawn": {
     "message": "bemalt"
+  },
+  "look": {
+    "message": "Aussehen"
+  },
+  "lookStandard": {
+    "message": "Standard (folgt Hell/Dunkel)"
+  },
+  "lookVivid": {
+    "message": "Vivid (warm und farbenfroh)"
   }
 }

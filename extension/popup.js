@@ -27,7 +27,7 @@
   const s = await skbGetSettings();
 
   const res = $('resolution');
-  const fields = ['format', 'afterCapture', 'allTabsScope'];
+  const fields = ['format', 'afterCapture', 'allTabsScope', 'look'];
 
   res.value = s.resolution;
   for (const f of fields) $(f).value = s[f];
