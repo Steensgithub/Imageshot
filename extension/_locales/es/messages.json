@@ -413,5 +413,14 @@
   },
   "drawn": {
     "message": "con dibujo"
+  },
+  "look": {
+    "message": "Aspecto"
+  },
+  "lookStandard": {
+    "message": "Estándar (sigue claro/oscuro)"
+  },
+  "lookVivid": {
+    "message": "Vivid (cálido y colorido)"
   }
 }

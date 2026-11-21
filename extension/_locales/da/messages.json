@@ -413,5 +413,14 @@
   },
   "drawn": {
     "message": "tegnet på"
+  },
+  "look": {
+    "message": "Udseende"
+  },
+  "lookStandard": {
+    "message": "Standard (følger lys/mørk)"
+  },
+  "lookVivid": {
+    "message": "Vivid (varm og farverig)"
   }
 }

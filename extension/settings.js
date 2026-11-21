@@ -8,7 +8,8 @@ const SKB_DEFAULTS = {
   afterCapture: 'clipboard', // clipboard | copy | save
   autoClose: true,           // close the clipboard window automatically after copy/save
   allTabsScope: 'window',    // window | all
-  folder: SKB_BRAND          // subfolder in Downloads
+  folder: SKB_BRAND,         // subfolder in Downloads
+  look: 'standard'           // standard (follows light/dark) | vivid
 };
 
 const SKB_FORMATS = {
